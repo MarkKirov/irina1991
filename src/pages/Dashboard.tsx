@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useTaskContext, Task } from "@/context/TaskContext";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, Circle, GripVertical, Sparkles, ArrowLeft } from "lucide-react";
@@ -11,6 +11,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [selectedDay, setSelectedDay] = useState<string>("Пн");
   const [dragging, setDragging] = useState<string | null>(null);
+  const touchData = useRef<{ id: string; startY: number } | null>(null);
 
   const actionable = tasks.filter((t) => t.priority && t.priority !== "drop");
   const unassigned = actionable.filter((t) => !t.day);
@@ -26,6 +27,22 @@ const Dashboard = () => {
   const handleDragStart = (id: string) => setDragging(id);
   const handleDrop = (day: string) => {
     if (dragging) { assignDay(dragging, day); setDragging(null); }
+  };
+
+  // Touch-based: tap task to select, tap day to assign
+  const [touchSelected, setTouchSelected] = useState<string | null>(null);
+
+  const handleTaskTap = (id: string) => {
+    setTouchSelected((prev) => (prev === id ? null : id));
+  };
+
+  const handleDayTap = (day: string) => {
+    if (touchSelected) {
+      assignDay(touchSelected, day);
+      setTouchSelected(null);
+    } else {
+      setSelectedDay(day);
+    }
   };
 
   const priorityBadge = (t: Task) => {
@@ -44,7 +61,9 @@ const Dashboard = () => {
           Твой план на неделю
         </h1>
         <p className="text-sm text-muted-foreground">
-          Перетащи задачи на нужные дни или кликни, чтобы назначить.
+          {touchSelected
+            ? "✨ Задача выбрана — нажми на день, чтобы назначить"
+            : "Нажми на задачу, затем на день — или перетащи (на ПК)."}
         </p>
       </div>
 
@@ -63,7 +82,10 @@ const Dashboard = () => {
                   key={t.id}
                   draggable
                   onDragStart={() => handleDragStart(t.id)}
-                  className="flex items-center gap-2 bg-background border rounded-lg px-3 py-2 text-sm cursor-grab active:cursor-grabbing hover:shadow-sm transition-shadow"
+                  onClick={() => handleTaskTap(t.id)}
+                  className={`flex items-center gap-2 bg-background border rounded-lg px-3 py-2 text-sm cursor-grab active:cursor-grabbing hover:shadow-sm transition-all duration-150 ${
+                    touchSelected === t.id ? "ring-2 ring-primary border-primary shadow-md" : ""
+                  }`}
                 >
                   <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0" />
                   <span className="text-xs">{categoryEmoji(t.category)}</span>
@@ -93,16 +115,19 @@ const Dashboard = () => {
             {DAYS.map((day) => {
               const dt = dayTasks(day);
               const isSelected = day === selectedDay;
+              const isDropTarget = touchSelected !== null;
               return (
                 <div
                   key={day}
-                  onClick={() => setSelectedDay(day)}
+                  onClick={() => handleDayTap(day)}
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={() => handleDrop(day)}
                   className={`rounded-xl border-2 p-3 min-h-[180px] transition-all duration-200 cursor-pointer ${
                     isSelected
                       ? "border-primary bg-primary/5 shadow-sm"
-                      : "border-transparent bg-card hover:border-border"
+                      : isDropTarget
+                        ? "border-dashed border-primary/40 bg-primary/5 hover:border-primary"
+                        : "border-transparent bg-card hover:border-border"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -137,7 +162,7 @@ const Dashboard = () => {
 
                   {dt.length === 0 && (
                     <p className="text-[10px] text-muted-foreground/40 text-center mt-8">
-                      Перетащи сюда
+                      {isDropTarget ? "↓ Назначить сюда" : "Перетащи сюда"}
                     </p>
                   )}
                 </div>

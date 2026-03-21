@@ -52,7 +52,7 @@ const BrainDump = () => {
                 onChange={(e) => setInputs((p) => ({ ...p, [key]: e.target.value }))}
                 onKeyDown={(e) => handleKey(e, key)}
                 placeholder="Добавить задачу…"
-                className="flex-1 bg-muted/50 rounded-lg px-3 py-2 text-sm placeholder:text-muted-foreground/60 border-0 outline-none focus:ring-2 focus:ring-ring/30 transition-shadow"
+                className="flex-1 bg-muted/50 rounded-lg px-3 py-2 text-base placeholder:text-muted-foreground/60 border-0 outline-none focus:ring-2 focus:ring-ring/30 transition-shadow"
               />
               <button
                 onClick={() => handleAdd(key)}
