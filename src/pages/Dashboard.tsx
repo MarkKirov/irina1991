@@ -1,8 +1,9 @@
 import { useState, useRef } from "react";
 import { useTaskContext, Task } from "@/context/TaskContext";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle2, Circle, GripVertical, Sparkles, ArrowLeft } from "lucide-react";
+import { CheckCircle2, Circle, GripVertical, Sparkles, ArrowLeft, MessageCircle, Loader2, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
@@ -12,6 +13,11 @@ const Dashboard = () => {
   const [selectedDay, setSelectedDay] = useState<string>("Пн");
   const [dragging, setDragging] = useState<string | null>(null);
   const touchData = useRef<{ id: string; startY: number } | null>(null);
+
+  // AI coach state
+  const [aiComment, setAiComment] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   const actionable = tasks.filter((t) => t.priority && t.priority !== "drop");
   const unassigned = actionable.filter((t) => !t.day);
@@ -29,7 +35,6 @@ const Dashboard = () => {
     if (dragging) { assignDay(dragging, day); setDragging(null); }
   };
 
-  // Touch-based: tap task to select, tap day to assign
   const [touchSelected, setTouchSelected] = useState<string | null>(null);
 
   const handleTaskTap = (id: string) => {
@@ -42,6 +47,35 @@ const Dashboard = () => {
       setTouchSelected(null);
     } else {
       setSelectedDay(day);
+    }
+  };
+
+  const fetchAiCoach = async () => {
+    setAiLoading(true);
+    setAiError(null);
+    setAiComment(null);
+    try {
+      const weekPlan = DAYS.map((day) => ({
+        day,
+        tasks: dayTasks(day).map((t) => ({
+          text: t.text,
+          category: t.category,
+          priority: t.priority,
+          done: t.done,
+        })),
+      }));
+
+      const { data, error } = await supabase.functions.invoke("ai-coach", {
+        body: { tasks: weekPlan },
+      });
+
+      if (error) throw error;
+      setAiComment(data.comment);
+    } catch (e: any) {
+      console.error("AI coach error:", e);
+      setAiError(e?.message || "Не удалось получить комментарий");
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -172,7 +206,52 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="flex justify-center mt-10">
+      {/* AI Coach Card */}
+      {aiComment && (
+        <div className="mt-6 bg-card border rounded-2xl p-5 shadow-sm relative animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <button
+            onClick={() => setAiComment(null)}
+            className="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <MessageCircle className="w-4 h-4 text-primary" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-foreground mb-1">Комментарий от Ирины</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">{aiComment}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {aiError && (
+        <div className="mt-6 bg-destructive/10 border border-destructive/20 rounded-2xl p-4 text-sm text-destructive text-center">
+          {aiError}
+        </div>
+      )}
+
+      <div className="flex flex-col items-center gap-4 mt-10">
+        <button
+          onClick={fetchAiCoach}
+          disabled={aiLoading || actionable.filter((t) => t.day).length === 0}
+          className="group inline-flex items-center gap-2.5 bg-primary text-primary-foreground px-8 py-3.5 rounded-full font-semibold text-sm tracking-wide shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200 active:scale-[0.97] disabled:opacity-40 disabled:pointer-events-none"
+        >
+          {aiLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Анализирую план…
+            </>
+          ) : (
+            <>
+              <MessageCircle className="w-4 h-4" />
+              Получить совет от Ирины
+            </>
+          )}
+        </button>
+
         <button
           onClick={() => navigate("/")}
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
