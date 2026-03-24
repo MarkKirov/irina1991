@@ -25,7 +25,7 @@ serve(async (req) => {
 - Используй 1-2 эмодзи, не больше
 Отвечай ТОЛЬКО текстом комментария, без заголовков и маркеров.`;
 
-    const userMsg = `Вот план на неделю:\n${JSON.stringify(tasks, null, 2)}`;
+    const userMsg = `Главная цель: ${goal || "не указана"}\n\nВот план на неделю:\n${JSON.stringify(tasks, null, 2)}`;
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
