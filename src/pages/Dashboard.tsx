@@ -1,9 +1,11 @@
 import { useState, useRef } from "react";
 import { useTaskContext, Task } from "@/context/TaskContext";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle2, Circle, GripVertical, Sparkles, ArrowLeft, MessageCircle, Loader2, X, Target } from "lucide-react";
+import { CheckCircle2, Circle, GripVertical, Sparkles, ArrowLeft, MessageCircle, Loader2, X, Target, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
@@ -77,6 +79,54 @@ const Dashboard = () => {
     } finally {
       setAiLoading(false);
     }
+  };
+
+  const generatePDF = () => {
+    const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+    // Title
+    doc.setFontSize(18);
+    doc.text("План на неделю", 105, 20, { align: "center" });
+
+    if (goal) {
+      doc.setFontSize(11);
+      doc.setTextColor(100);
+      doc.text(`Цель: ${goal}`, 105, 28, { align: "center" });
+      doc.setTextColor(0);
+    }
+
+    const tableData: string[][] = [];
+    DAYS.forEach((day) => {
+      const dt = dayTasks(day);
+      if (dt.length > 0) {
+        dt.forEach((t, i) => {
+          const status = t.done ? "✓" : "○";
+          const cat = t.category === "home" ? "Дом" : t.category === "work" ? "Работа" : "Для себя";
+          tableData.push([
+            i === 0 ? day : "",
+            `${status} ${t.text}`,
+            cat,
+          ]);
+        });
+      } else {
+        tableData.push([day, "—", ""]);
+      }
+    });
+
+    autoTable(doc, {
+      startY: goal ? 34 : 28,
+      head: [["День", "Задача", "Сфера"]],
+      body: tableData,
+      styles: { fontSize: 10, cellPadding: 3 },
+      headStyles: { fillColor: [107, 142, 87] },
+      columnStyles: {
+        0: { cellWidth: 20, fontStyle: "bold" },
+        1: { cellWidth: 130 },
+        2: { cellWidth: 30 },
+      },
+    });
+
+    doc.save("plan-nedeli.pdf");
   };
 
   const priorityBadge = (t: Task) => {
@@ -241,6 +291,15 @@ const Dashboard = () => {
       )}
 
       <div className="flex flex-col items-center gap-4 mt-10">
+        <button
+          onClick={generatePDF}
+          disabled={actionable.filter((t) => t.day).length === 0}
+          className="group inline-flex items-center gap-2.5 bg-foreground text-background px-8 py-3.5 rounded-full font-semibold text-sm tracking-wide shadow-lg hover:shadow-xl transition-all duration-200 active:scale-[0.97] disabled:opacity-40 disabled:pointer-events-none"
+        >
+          <Download className="w-4 h-4" />
+          Сохранить план в PDF
+        </button>
+
         <button
           onClick={fetchAiCoach}
           disabled={aiLoading || actionable.filter((t) => t.day).length === 0}
