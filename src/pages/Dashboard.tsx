@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { useTaskContext, Task } from "@/context/TaskContext";
+import { useState, useRef, useEffect } from "react";
+import { useTaskContext, useCurrentStep, Task } from "@/context/TaskContext";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, Circle, GripVertical, Sparkles, ArrowLeft, MessageCircle, Loader2, X, Target, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,8 @@ const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
 const Dashboard = () => {
   const { tasks, assignDay, toggleDone, goal } = useTaskContext();
+  const { saveStep } = useCurrentStep();
+  useEffect(() => { saveStep("/dashboard"); }, []);
   const navigate = useNavigate();
   const [selectedDay, setSelectedDay] = useState<string>("Пн");
   const [dragging, setDragging] = useState<string | null>(null);

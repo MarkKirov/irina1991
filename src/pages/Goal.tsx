@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTaskContext } from "@/context/TaskContext";
+import { useTaskContext, useCurrentStep } from "@/context/TaskContext";
 import { ArrowRight, Target, CheckCircle, MessageCircle, Loader2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -13,7 +13,10 @@ const goalTips = [
 const Goal = () => {
   const navigate = useNavigate();
   const { goal, setGoal } = useTaskContext();
+  const { saveStep } = useCurrentStep();
   const [input, setInput] = useState(goal);
+
+  useEffect(() => { saveStep("/goal"); }, []);
 
   const [aiComment, setAiComment] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);

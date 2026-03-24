@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 export type Category = "home" | "work" | "me";
 export type Priority = "urgent" | "important" | "routine" | "drop" | null;
@@ -31,9 +31,36 @@ export const useTaskContext = () => {
   return ctx;
 };
 
+const STORAGE_KEY_TASKS = "irina_tasks";
+const STORAGE_KEY_GOAL = "irina_goal";
+const STORAGE_KEY_STEP = "irina_step";
+
+const loadFromStorage = <T,>(key: string, fallback: T): T => {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+export const useCurrentStep = () => {
+  const getStep = () => loadFromStorage<string>(STORAGE_KEY_STEP, "/");
+  const saveStep = (step: string) => {
+    localStorage.setItem(STORAGE_KEY_STEP, JSON.stringify(step));
+  };
+  return { getStep, saveStep };
+};
+
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [goal, setGoal] = useState<string>("");
+  const [tasks, setTasks] = useState<Task[]>(() => loadFromStorage(STORAGE_KEY_TASKS, []));
+  const [goal, setGoalState] = useState<string>(() => loadFromStorage(STORAGE_KEY_GOAL, ""));
+
+  // Persist to localStorage on every change
+  const setGoal = (g: string) => {
+    setGoalState(g);
+    localStorage.setItem(STORAGE_KEY_GOAL, JSON.stringify(g));
+  };
 
   const addTask = (text: string, category: Category) => {
     setTasks((prev) => [
@@ -57,6 +84,11 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const toggleDone = (id: string) => {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
   };
+
+  // Persist tasks to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_TASKS, JSON.stringify(tasks));
+  }, [tasks]);
 
   return (
     <TaskContext.Provider value={{ tasks, goal, setGoal, addTask, setPriority, assignDay, toggleDone, unassignDay }}>
