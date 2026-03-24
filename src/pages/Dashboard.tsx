@@ -66,7 +66,7 @@ const Dashboard = () => {
       }));
 
       const { data, error } = await supabase.functions.invoke("ai-coach", {
-        body: { tasks: weekPlan },
+        body: { tasks: weekPlan, goal },
       });
 
       if (error) throw error;
