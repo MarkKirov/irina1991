@@ -16,8 +16,7 @@ const categoryLabels: Record<Category, { label: string; emoji: string }> = {
 };
 
 const Filtering = () => {
-  const navigate = useNavigate();
-  const { tasks, setPriority } = useTaskContext();
+  const { tasks, setPriority, goal } = useTaskContext();
 
   const grouped = (["home", "work", "me"] as Category[]).map((cat) => ({
     ...categoryLabels[cat],
