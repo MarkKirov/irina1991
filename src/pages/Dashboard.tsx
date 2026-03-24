@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { robotoBase64 } from "@/fonts/roboto-base64";
 
 const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 const MONTH = "Месяц";
