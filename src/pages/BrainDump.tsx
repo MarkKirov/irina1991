@@ -9,6 +9,29 @@ const categories: { key: Category; label: string; emoji: string }[] = [
   { key: "me", label: "Я (личное время)", emoji: "🧘‍♀️" },
 ];
 
+const TipFromIrina = () => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="max-w-md mx-auto mb-8">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-2 bg-accent/60 border border-accent rounded-xl px-4 py-3 text-sm font-medium text-foreground hover:bg-accent/80 transition-colors"
+      >
+        <Lightbulb className="w-4 h-4 text-primary shrink-0" />
+        <span>Совет от Ирины</span>
+        {open ? <ChevronUp className="w-4 h-4 ml-auto text-muted-foreground" /> : <ChevronDown className="w-4 h-4 ml-auto text-muted-foreground" />}
+      </button>
+      {open && (
+        <div className="mt-2 bg-accent/30 border border-accent rounded-xl px-4 py-3 text-sm text-muted-foreground leading-relaxed space-y-2">
+          <p>Не фильтруй и не оценивай — просто выписывай <strong>всё</strong>, что крутится в голове.</p>
+          <p>Сюда идут и «висячие» задачи, которые давно откладываешь, и те, что напрямую ведут к твоей главной цели.</p>
+          <p>Важно или неважно — разберём на следующем шаге. Сейчас задача — освободить голову. 💛</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const BrainDump = () => {
   const navigate = useNavigate();
   const { tasks, addTask, goal } = useTaskContext();
