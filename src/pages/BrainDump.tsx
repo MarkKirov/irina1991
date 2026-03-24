@@ -11,7 +11,7 @@ const categories: { key: Category; label: string; emoji: string }[] = [
 
 const BrainDump = () => {
   const navigate = useNavigate();
-  const { tasks, addTask } = useTaskContext();
+  const { tasks, addTask, goal } = useTaskContext();
   const [inputs, setInputs] = useState<Record<Category, string>>({ home: "", work: "", me: "" });
 
   const handleAdd = (cat: Category) => {
