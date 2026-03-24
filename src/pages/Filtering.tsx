@@ -1,5 +1,6 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTaskContext, Priority, Category } from "@/context/TaskContext";
+import { useTaskContext, useCurrentStep, Priority, Category } from "@/context/TaskContext";
 import { ArrowRight, Target } from "lucide-react";
 
 const priorities: { value: Priority; label: string; emoji: string; color: string }[] = [
