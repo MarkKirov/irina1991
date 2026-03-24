@@ -8,6 +8,8 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+const MONTH = "Месяц";
+const ALL_SLOTS = [...DAYS, MONTH];
 
 const Dashboard = () => {
   const { tasks, assignDay, toggleDone, goal } = useTaskContext();
