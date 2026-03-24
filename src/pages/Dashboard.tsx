@@ -86,7 +86,7 @@ const Dashboard = () => {
     }
   };
 
-  const generatePDF = () => {
+  const generatePDF = async () => {
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
     doc.addFileToVFS("Roboto.ttf", robotoBase64);
@@ -142,15 +142,33 @@ const Dashboard = () => {
       },
     });
 
+    const filename = "plan-nedeli.pdf";
     const blob = doc.output("blob");
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "plan-nedeli.pdf";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    const file = new File([blob], filename, { type: "application/pdf" });
+
+    try {
+      if (
+        typeof navigator !== "undefined" &&
+        typeof navigator.share === "function" &&
+        typeof navigator.canShare === "function" &&
+        navigator.canShare({ files: [file] })
+      ) {
+        await navigator.share({
+          title: "План на неделю",
+          text: goal ? `Моя цель: ${goal}` : "План на неделю",
+          files: [file],
+        });
+        return;
+      }
+
+      const openedWindow = window.open(url, "_blank", "noopener,noreferrer");
+      if (!openedWindow) {
+        window.location.href = url;
+      }
+    } finally {
+      window.setTimeout(() => URL.revokeObjectURL(url), 60000);
+    }
   };
 
   const priorityBadge = (t: Task) => {
