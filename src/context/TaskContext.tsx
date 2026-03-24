@@ -33,6 +33,7 @@ export const useTaskContext = () => {
 
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [goal, setGoal] = useState<string>("");
 
   const addTask = (text: string, category: Category) => {
     setTasks((prev) => [
