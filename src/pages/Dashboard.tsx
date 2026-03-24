@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { useTaskContext, Task } from "@/context/TaskContext";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle2, Circle, GripVertical, Sparkles, ArrowLeft, MessageCircle, Loader2, X } from "lucide-react";
+import { CheckCircle2, Circle, GripVertical, Sparkles, ArrowLeft, MessageCircle, Loader2, X, Target } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
