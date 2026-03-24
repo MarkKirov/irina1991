@@ -292,6 +292,15 @@ const Dashboard = () => {
 
       <div className="flex flex-col items-center gap-4 mt-10">
         <button
+          onClick={generatePDF}
+          disabled={actionable.filter((t) => t.day).length === 0}
+          className="group inline-flex items-center gap-2.5 bg-foreground text-background px-8 py-3.5 rounded-full font-semibold text-sm tracking-wide shadow-lg hover:shadow-xl transition-all duration-200 active:scale-[0.97] disabled:opacity-40 disabled:pointer-events-none"
+        >
+          <Download className="w-4 h-4" />
+          Сохранить план в PDF
+        </button>
+
+        <button
           onClick={fetchAiCoach}
           disabled={aiLoading || actionable.filter((t) => t.day).length === 0}
           className="group inline-flex items-center gap-2.5 bg-primary text-primary-foreground px-8 py-3.5 rounded-full font-semibold text-sm tracking-wide shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200 active:scale-[0.97] disabled:opacity-40 disabled:pointer-events-none"
