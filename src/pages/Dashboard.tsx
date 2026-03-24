@@ -423,6 +423,16 @@ const Dashboard = () => {
                             {t.done ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
                           </button>
                           <span className="leading-snug">{t.text}</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              unassignDay(t.id);
+                            }}
+                            className="shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors"
+                            title="Вернуть в нераспределённые"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
                         </div>
                       ))}
                     </div>
