@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { TaskProvider } from "@/context/TaskContext";
 import Landing from "./pages/Landing";
+import Goal from "./pages/Goal";
 import BrainDump from "./pages/BrainDump";
 import Filtering from "./pages/Filtering";
 import Dashboard from "./pages/Dashboard";
