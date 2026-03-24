@@ -37,15 +37,17 @@ const BrainDump = () => {
         </div>
       )}
 
-      <div className="text-center mb-10 space-y-2">
+      <div className="text-center mb-6 space-y-2">
         <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Шаг 1 из 3</p>
         <h1 className="text-3xl md:text-4xl text-foreground" style={{ lineHeight: 1.15 }}>
-          Выгрузка из головы
+          Выгрузи всё из головы
         </h1>
         <p className="text-sm text-muted-foreground max-w-md mx-auto">
-          Выпиши всё, что крутится в голове. Напиши задачу и нажми Enter.
+          Выпиши все задачи по основным сферам жизни, которые сейчас в голове. Напиши задачу и нажми <strong>+</strong>, чтобы она сохранилась.
         </p>
       </div>
+
+      <TipFromIrina />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {categories.map(({ key, label, emoji }) => (
