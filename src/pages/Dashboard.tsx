@@ -81,6 +81,54 @@ const Dashboard = () => {
     }
   };
 
+  const generatePDF = () => {
+    const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+    // Title
+    doc.setFontSize(18);
+    doc.text("План на неделю", 105, 20, { align: "center" });
+
+    if (goal) {
+      doc.setFontSize(11);
+      doc.setTextColor(100);
+      doc.text(`Цель: ${goal}`, 105, 28, { align: "center" });
+      doc.setTextColor(0);
+    }
+
+    const tableData: string[][] = [];
+    DAYS.forEach((day) => {
+      const dt = dayTasks(day);
+      if (dt.length > 0) {
+        dt.forEach((t, i) => {
+          const status = t.done ? "✓" : "○";
+          const cat = t.category === "home" ? "Дом" : t.category === "work" ? "Работа" : "Для себя";
+          tableData.push([
+            i === 0 ? day : "",
+            `${status} ${t.text}`,
+            cat,
+          ]);
+        });
+      } else {
+        tableData.push([day, "—", ""]);
+      }
+    });
+
+    autoTable(doc, {
+      startY: goal ? 34 : 28,
+      head: [["День", "Задача", "Сфера"]],
+      body: tableData,
+      styles: { fontSize: 10, cellPadding: 3 },
+      headStyles: { fillColor: [107, 142, 87] },
+      columnStyles: {
+        0: { cellWidth: 20, fontStyle: "bold" },
+        1: { cellWidth: 130 },
+        2: { cellWidth: 30 },
+      },
+    });
+
+    doc.save("plan-nedeli.pdf");
+  };
+
   const priorityBadge = (t: Task) => {
     if (t.priority === "urgent") return <span className="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full">🔥</span>;
     if (t.priority === "important") return <span className="text-[10px] bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded-full">⭐️</span>;
