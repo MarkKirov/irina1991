@@ -89,12 +89,11 @@ const Dashboard = () => {
   const generatePDF = () => {
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
-    // Add Cyrillic font
     doc.addFileToVFS("Roboto.ttf", robotoBase64);
     doc.addFont("Roboto.ttf", "Roboto", "normal");
-    doc.setFont("Roboto");
+    doc.addFont("Roboto.ttf", "Roboto", "bold");
+    doc.setFont("Roboto", "normal");
 
-    // Title
     doc.setFontSize(18);
     doc.text("План на неделю", 105, 20, { align: "center" });
 
@@ -113,11 +112,7 @@ const Dashboard = () => {
         dt.forEach((t, i) => {
           const status = t.done ? "✓" : "○";
           const cat = t.category === "home" ? "Дом" : t.category === "work" ? "Работа" : "Для себя";
-          tableData.push([
-            i === 0 ? label : "",
-            `${status} ${t.text}`,
-            cat,
-          ]);
+          tableData.push([i === 0 ? label : "", `${status} ${t.text}`, cat]);
         });
       } else if (day !== MONTH) {
         tableData.push([label, "—", ""]);
@@ -128,16 +123,34 @@ const Dashboard = () => {
       startY: goal ? 34 : 28,
       head: [["День", "Задача", "Сфера"]],
       body: tableData,
-      styles: { fontSize: 10, cellPadding: 3, font: "Roboto" },
-      headStyles: { fillColor: [107, 142, 87] },
+      styles: {
+        fontSize: 10,
+        cellPadding: 3,
+        font: "Roboto",
+        fontStyle: "normal",
+        overflow: "linebreak",
+      },
+      headStyles: {
+        fillColor: [107, 142, 87],
+        font: "Roboto",
+        fontStyle: "bold",
+      },
       columnStyles: {
-        0: { cellWidth: 25, fontStyle: "bold" },
-        1: { cellWidth: 120 },
-        2: { cellWidth: 30 },
+        0: { cellWidth: 25, font: "Roboto", fontStyle: "normal" },
+        1: { cellWidth: 120, font: "Roboto", fontStyle: "normal" },
+        2: { cellWidth: 30, font: "Roboto", fontStyle: "normal" },
       },
     });
 
-    doc.save("plan-nedeli.pdf");
+    const blob = doc.output("blob");
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "plan-nedeli.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const priorityBadge = (t: Task) => {
