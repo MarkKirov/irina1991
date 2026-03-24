@@ -6,16 +6,16 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-serve(async (req) => {
-  if (req.method === "OPTIONS")
-    return new Response(null, { headers: corsHeaders });
+const goalReviewPrompt = `Ты — Ирина, женский коуч по тайм-менеджменту. Говоришь на русском, тепло и по-дружески, на «ты».
+Тебе дают цель, которую написала девушка. Дай краткий (2-4 предложения) дружеский комментарий:
+- Оцени цель по 3 критериям: измеримость, реалистичность, комфортность
+- Если цель размытая — мягко подскажи, как её конкретизировать
+- Если цель нереалистичная или вызывает тревогу — деликатно предложи скорректировать
+- Если цель хорошая — похвали и поддержи
+- Используй 1-2 эмодзи, не больше
+Отвечай ТОЛЬКО текстом комментария, без заголовков и маркеров.`;
 
-  try {
-    const { tasks, goal } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
-
-    const systemPrompt = `Ты — Ирина, женский коуч по тайм-менеджменту. Говоришь на русском, тепло и по-дружески, на «ты».
+const weekPlanPrompt = `Ты — Ирина, женский коуч по тайм-менеджменту. Говоришь на русском, тепло и по-дружески, на «ты».
 Тебе дают план задач на неделю и главную цель пользователя. Дай краткий (3-5 предложений) дружеский комментарий:
 - Оцени, насколько план ведёт к главной цели
 - Похвали за хорошее
@@ -25,7 +25,27 @@ serve(async (req) => {
 - Используй 1-2 эмодзи, не больше
 Отвечай ТОЛЬКО текстом комментария, без заголовков и маркеров.`;
 
-    const userMsg = `Главная цель: ${goal || "не указана"}\n\nВот план на неделю:\n${JSON.stringify(tasks, null, 2)}`;
+serve(async (req) => {
+  if (req.method === "OPTIONS")
+    return new Response(null, { headers: corsHeaders });
+
+  try {
+    const body = await req.json();
+    const { type, goal, tasks } = body;
+
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    let systemPrompt: string;
+    let userMsg: string;
+
+    if (type === "goal-review") {
+      systemPrompt = goalReviewPrompt;
+      userMsg = `Вот цель, которую написала девушка: "${goal}"`;
+    } else {
+      systemPrompt = weekPlanPrompt;
+      userMsg = `Главная цель: ${goal || "не указана"}\n\nВот план на неделю:\n${JSON.stringify(tasks, null, 2)}`;
+    }
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
@@ -64,7 +84,7 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    const comment = data.choices?.[0]?.message?.content ?? "Отличный план! 💪";
+    const comment = data.choices?.[0]?.message?.content ?? "Отличная цель! 💪";
 
     return new Response(JSON.stringify({ comment }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
