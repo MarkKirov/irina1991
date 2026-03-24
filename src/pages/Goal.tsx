@@ -13,7 +13,10 @@ const goalTips = [
 const Goal = () => {
   const navigate = useNavigate();
   const { goal, setGoal } = useTaskContext();
+  const { saveStep } = useCurrentStep();
   const [input, setInput] = useState(goal);
+
+  useEffect(() => { saveStep("/goal"); }, []);
 
   const [aiComment, setAiComment] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);

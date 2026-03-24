@@ -50,6 +50,9 @@ const BrainDump = () => {
 
   const catTasks = (cat: Category) => tasks.filter((t) => t.category === cat);
 
+  const { saveStep } = useCurrentStep();
+  useEffect(() => { saveStep("/dump"); }, []);
+
   return (
     <div className="min-h-screen px-4 py-8 md:py-12 max-w-5xl mx-auto">
       {goal && (

@@ -18,6 +18,8 @@ const categoryLabels: Record<Category, { label: string; emoji: string }> = {
 
 const Filtering = () => {
   const { tasks, setPriority, goal } = useTaskContext();
+  const { saveStep } = useCurrentStep();
+  useEffect(() => { saveStep("/filter"); }, []);
 
   const grouped = (["home", "work", "me"] as Category[]).map((cat) => ({
     ...categoryLabels[cat],
