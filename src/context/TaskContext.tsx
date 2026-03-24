@@ -85,6 +85,11 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
   };
 
+  // Persist tasks to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_TASKS, JSON.stringify(tasks));
+  }, [tasks]);
+
   return (
     <TaskContext.Provider value={{ tasks, goal, setGoal, addTask, setPriority, assignDay, toggleDone, unassignDay }}>
       {children}
