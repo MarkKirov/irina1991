@@ -1,10 +1,19 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Clock, Sparkles, Heart } from "lucide-react";
 import coachPhoto from "@/assets/coach-irina.png";
+import { useCurrentStep } from "@/context/TaskContext";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { getStep } = useCurrentStep();
 
+  useEffect(() => {
+    const saved = getStep();
+    if (saved && saved !== "/") {
+      navigate(saved, { replace: true });
+    }
+  }, []);
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
       <div className="max-w-lg w-full flex flex-col items-center text-center space-y-8">

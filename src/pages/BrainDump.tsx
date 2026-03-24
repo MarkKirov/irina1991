@@ -1,6 +1,6 @@
-import { useState, KeyboardEvent } from "react";
+import { useState, useEffect, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTaskContext, Category } from "@/context/TaskContext";
+import { useTaskContext, useCurrentStep, Category } from "@/context/TaskContext";
 import { ArrowRight, Plus, Target, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
 
 const categories: { key: Category; label: string; emoji: string }[] = [
