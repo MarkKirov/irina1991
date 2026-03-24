@@ -100,20 +100,21 @@ const Dashboard = () => {
     }
 
     const tableData: string[][] = [];
-    DAYS.forEach((day) => {
+    [...DAYS, MONTH].forEach((day) => {
+      const label = day === MONTH ? "В течение месяца" : day;
       const dt = dayTasks(day);
       if (dt.length > 0) {
         dt.forEach((t, i) => {
           const status = t.done ? "✓" : "○";
           const cat = t.category === "home" ? "Дом" : t.category === "work" ? "Работа" : "Для себя";
           tableData.push([
-            i === 0 ? day : "",
+            i === 0 ? label : "",
             `${status} ${t.text}`,
             cat,
           ]);
         });
-      } else {
-        tableData.push([day, "—", ""]);
+      } else if (day !== MONTH) {
+        tableData.push([label, "—", ""]);
       }
     });
 
