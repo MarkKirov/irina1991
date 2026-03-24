@@ -1,7 +1,7 @@
 import { useState, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTaskContext, Category } from "@/context/TaskContext";
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight, Plus, Target } from "lucide-react";
 
 const categories: { key: Category; label: string; emoji: string }[] = [
   { key: "home", label: "Дом и семья", emoji: "🏠" },
@@ -11,7 +11,7 @@ const categories: { key: Category; label: string; emoji: string }[] = [
 
 const BrainDump = () => {
   const navigate = useNavigate();
-  const { tasks, addTask } = useTaskContext();
+  const { tasks, addTask, goal } = useTaskContext();
   const [inputs, setInputs] = useState<Record<Category, string>>({ home: "", work: "", me: "" });
 
   const handleAdd = (cat: Category) => {
@@ -29,6 +29,14 @@ const BrainDump = () => {
 
   return (
     <div className="min-h-screen px-4 py-8 md:py-12 max-w-5xl mx-auto">
+      {goal && (
+        <div className="mb-6 mx-auto max-w-md bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 flex items-center gap-2.5 text-sm">
+          <Target className="w-4 h-4 text-primary shrink-0" />
+          <span className="text-muted-foreground">Моя цель:</span>
+          <span className="font-medium text-foreground truncate">{goal}</span>
+        </div>
+      )}
+
       <div className="text-center mb-10 space-y-2">
         <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Шаг 1 из 3</p>
         <h1 className="text-3xl md:text-4xl text-foreground" style={{ lineHeight: 1.15 }}>

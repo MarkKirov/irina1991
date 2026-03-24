@@ -14,6 +14,8 @@ export interface Task {
 
 interface TaskContextType {
   tasks: Task[];
+  goal: string;
+  setGoal: (goal: string) => void;
   addTask: (text: string, category: Category) => void;
   setPriority: (id: string, priority: Priority) => void;
   assignDay: (id: string, day: string) => void;
@@ -31,6 +33,7 @@ export const useTaskContext = () => {
 
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [goal, setGoal] = useState<string>("");
 
   const addTask = (text: string, category: Category) => {
     setTasks((prev) => [
@@ -56,7 +59,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <TaskContext.Provider value={{ tasks, addTask, setPriority, assignDay, toggleDone, unassignDay }}>
+    <TaskContext.Provider value={{ tasks, goal, setGoal, addTask, setPriority, assignDay, toggleDone, unassignDay }}>
       {children}
     </TaskContext.Provider>
   );

@@ -1,14 +1,14 @@
 import { useState, useRef } from "react";
 import { useTaskContext, Task } from "@/context/TaskContext";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle2, Circle, GripVertical, Sparkles, ArrowLeft, MessageCircle, Loader2, X } from "lucide-react";
+import { CheckCircle2, Circle, GripVertical, Sparkles, ArrowLeft, MessageCircle, Loader2, X, Target } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
 const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
 const Dashboard = () => {
-  const { tasks, assignDay, toggleDone } = useTaskContext();
+  const { tasks, assignDay, toggleDone, goal } = useTaskContext();
   const navigate = useNavigate();
   const [selectedDay, setSelectedDay] = useState<string>("Пн");
   const [dragging, setDragging] = useState<string | null>(null);
@@ -66,7 +66,7 @@ const Dashboard = () => {
       }));
 
       const { data, error } = await supabase.functions.invoke("ai-coach", {
-        body: { tasks: weekPlan },
+        body: { tasks: weekPlan, goal },
       });
 
       if (error) throw error;
@@ -89,6 +89,13 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen px-4 py-8 md:py-12 max-w-6xl mx-auto">
+      {goal && (
+        <div className="mb-6 mx-auto max-w-md bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 flex items-center gap-2.5 text-sm">
+          <Target className="w-4 h-4 text-primary shrink-0" />
+          <span className="text-muted-foreground">Моя цель:</span>
+          <span className="font-medium text-foreground truncate">{goal}</span>
+        </div>
+      )}
       <div className="text-center mb-8 space-y-2">
         <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Шаг 3 из 3</p>
         <h1 className="text-3xl md:text-4xl text-foreground" style={{ lineHeight: 1.15 }}>

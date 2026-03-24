@@ -11,20 +11,21 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
 
   try {
-    const { tasks } = await req.json();
+    const { tasks, goal } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
     const systemPrompt = `Ты — Ирина, женский коуч по тайм-менеджменту. Говоришь на русском, тепло и по-дружески, на «ты».
-Тебе дают план задач на неделю. Дай краткий (3-5 предложений) дружеский комментарий:
+Тебе дают план задач на неделю и главную цель пользователя. Дай краткий (3-5 предложений) дружеский комментарий:
+- Оцени, насколько план ведёт к главной цели
 - Похвали за хорошее
 - Мягко укажи, если перегруз (слишком много срочного)
 - Напомни про баланс работы/отдыха и личное время
-- Если личных задач мало — деликатно подскажи
+- Если задачи не связаны с целью — деликатно подскажи
 - Используй 1-2 эмодзи, не больше
 Отвечай ТОЛЬКО текстом комментария, без заголовков и маркеров.`;
 
-    const userMsg = `Вот план на неделю:\n${JSON.stringify(tasks, null, 2)}`;
+    const userMsg = `Главная цель: ${goal || "не указана"}\n\nВот план на неделю:\n${JSON.stringify(tasks, null, 2)}`;
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",

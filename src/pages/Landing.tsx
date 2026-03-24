@@ -25,7 +25,7 @@ const Landing = () => {
         </p>
 
         <button
-          onClick={() => navigate("/dump")}
+          onClick={() => navigate("/goal")}
           className="group inline-flex items-center gap-2.5 bg-primary text-primary-foreground px-8 py-3.5 rounded-full font-semibold text-sm tracking-wide shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200 active:scale-[0.97]"
         >
           Начать

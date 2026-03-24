@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useTaskContext, Priority, Category } from "@/context/TaskContext";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Target } from "lucide-react";
 
 const priorities: { value: Priority; label: string; emoji: string; color: string }[] = [
   { value: "urgent", label: "Срочное", emoji: "🔥", color: "bg-red-100 text-red-700 border-red-200 hover:bg-red-200" },
@@ -16,8 +16,7 @@ const categoryLabels: Record<Category, { label: string; emoji: string }> = {
 };
 
 const Filtering = () => {
-  const navigate = useNavigate();
-  const { tasks, setPriority } = useTaskContext();
+  const { tasks, setPriority, goal } = useTaskContext();
 
   const grouped = (["home", "work", "me"] as Category[]).map((cat) => ({
     ...categoryLabels[cat],
@@ -27,8 +26,17 @@ const Filtering = () => {
 
   const allTagged = tasks.length > 0 && tasks.every((t) => t.priority !== null);
 
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen px-4 py-8 md:py-12 max-w-3xl mx-auto">
+      {goal && (
+        <div className="mb-6 mx-auto max-w-md bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 flex items-center gap-2.5 text-sm">
+          <Target className="w-4 h-4 text-primary shrink-0" />
+          <span className="text-muted-foreground">Моя цель:</span>
+          <span className="font-medium text-foreground truncate">{goal}</span>
+        </div>
+      )}
       <div className="text-center mb-10 space-y-2">
         <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Шаг 2 из 3</p>
         <h1 className="text-3xl md:text-4xl text-foreground" style={{ lineHeight: 1.15 }}>
