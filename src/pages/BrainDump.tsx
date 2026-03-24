@@ -1,13 +1,36 @@
 import { useState, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTaskContext, Category } from "@/context/TaskContext";
-import { ArrowRight, Plus, Target } from "lucide-react";
+import { ArrowRight, Plus, Target, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
 
 const categories: { key: Category; label: string; emoji: string }[] = [
   { key: "home", label: "Дом и семья", emoji: "🏠" },
   { key: "work", label: "Работа и проекты", emoji: "💼" },
   { key: "me", label: "Я (личное время)", emoji: "🧘‍♀️" },
 ];
+
+const TipFromIrina = () => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="max-w-md mx-auto mb-8">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-2 bg-accent/60 border border-accent rounded-xl px-4 py-3 text-sm font-medium text-foreground hover:bg-accent/80 transition-colors"
+      >
+        <Lightbulb className="w-4 h-4 text-primary shrink-0" />
+        <span>Совет от Ирины</span>
+        {open ? <ChevronUp className="w-4 h-4 ml-auto text-muted-foreground" /> : <ChevronDown className="w-4 h-4 ml-auto text-muted-foreground" />}
+      </button>
+      {open && (
+        <div className="mt-2 bg-accent/30 border border-accent rounded-xl px-4 py-3 text-sm text-muted-foreground leading-relaxed space-y-2">
+          <p>Не фильтруй и не оценивай — просто выписывай <strong>всё</strong>, что крутится в голове.</p>
+          <p>Сюда идут и «висячие» задачи, которые давно откладываешь, и те, что напрямую ведут к твоей главной цели.</p>
+          <p>Важно или неважно — разберём на следующем шаге. Сейчас задача — освободить голову. 💛</p>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const BrainDump = () => {
   const navigate = useNavigate();
@@ -37,15 +60,17 @@ const BrainDump = () => {
         </div>
       )}
 
-      <div className="text-center mb-10 space-y-2">
+      <div className="text-center mb-6 space-y-2">
         <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Шаг 1 из 3</p>
         <h1 className="text-3xl md:text-4xl text-foreground" style={{ lineHeight: 1.15 }}>
-          Выгрузка из головы
+          Выгрузи всё из головы
         </h1>
         <p className="text-sm text-muted-foreground max-w-md mx-auto">
-          Выпиши всё, что крутится в голове. Напиши задачу и нажми Enter.
+          Выпиши все задачи по основным сферам жизни, которые сейчас в голове. Напиши задачу и нажми <strong>+</strong>, чтобы она сохранилась.
         </p>
       </div>
+
+      <TipFromIrina />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {categories.map(({ key, label, emoji }) => (
