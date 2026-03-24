@@ -264,6 +264,57 @@ const Dashboard = () => {
               );
             })}
           </div>
+
+          {/* Month bucket */}
+          {(() => {
+            const monthTasks = actionable.filter((t) => t.day === MONTH);
+            const isDropTarget = touchSelected !== null;
+            return (
+              <div
+                onClick={() => { if (touchSelected) { assignDay(touchSelected, MONTH); setTouchSelected(null); } }}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={() => handleDrop(MONTH)}
+                className={`rounded-xl border-2 p-4 min-h-[100px] transition-all duration-200 cursor-pointer ${
+                  isDropTarget
+                    ? "border-dashed border-accent/60 bg-accent/5 hover:border-accent"
+                    : "border-transparent bg-card hover:border-border"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-semibold text-foreground">📅 Сделать в течение месяца</span>
+                  {monthTasks.length > 0 && (
+                    <span className="text-[10px] bg-muted text-muted-foreground rounded-full px-1.5 py-0.5">
+                      {monthTasks.length}
+                    </span>
+                  )}
+                </div>
+                {monthTasks.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5">
+                    {monthTasks.map((t) => (
+                      <div
+                        key={t.id}
+                        className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-all duration-150 ${
+                          t.done ? "bg-primary/10 line-through text-muted-foreground" : "bg-background border"
+                        }`}
+                      >
+                        <button
+                          onClick={(e) => { e.stopPropagation(); toggleDone(t.id); }}
+                          className="shrink-0 text-primary hover:scale-110 transition-transform active:scale-95"
+                        >
+                          {t.done ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
+                        </button>
+                        <span className="leading-snug">{t.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-[10px] text-muted-foreground/40 text-center mt-4">
+                    {isDropTarget ? "↓ Перенести сюда" : "Задачи на месяц"}
+                  </p>
+                )}
+              </div>
+            );
+          })()}
         </div>
       </div>
 
