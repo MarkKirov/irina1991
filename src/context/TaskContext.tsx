@@ -14,6 +14,8 @@ export interface Task {
 
 interface TaskContextType {
   tasks: Task[];
+  goal: string;
+  setGoal: (goal: string) => void;
   addTask: (text: string, category: Category) => void;
   setPriority: (id: string, priority: Priority) => void;
   assignDay: (id: string, day: string) => void;
