@@ -59,7 +59,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <TaskContext.Provider value={{ tasks, addTask, setPriority, assignDay, toggleDone, unassignDay }}>
+    <TaskContext.Provider value={{ tasks, goal, setGoal, addTask, setPriority, assignDay, toggleDone, unassignDay }}>
       {children}
     </TaskContext.Provider>
   );
