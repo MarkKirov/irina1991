@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
 const Dashboard = () => {
-  const { tasks, assignDay, toggleDone } = useTaskContext();
+  const { tasks, assignDay, toggleDone, goal } = useTaskContext();
   const navigate = useNavigate();
   const [selectedDay, setSelectedDay] = useState<string>("Пн");
   const [dragging, setDragging] = useState<string | null>(null);
