@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { robotoBase64 } from "@/fonts/roboto-base64";
 
 const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 const MONTH = "Месяц";
@@ -88,6 +89,11 @@ const Dashboard = () => {
   const generatePDF = () => {
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
+    // Add Cyrillic font
+    doc.addFileToVFS("Roboto.ttf", robotoBase64);
+    doc.addFont("Roboto.ttf", "Roboto", "normal");
+    doc.setFont("Roboto");
+
     // Title
     doc.setFontSize(18);
     doc.text("План на неделю", 105, 20, { align: "center" });
@@ -122,11 +128,11 @@ const Dashboard = () => {
       startY: goal ? 34 : 28,
       head: [["День", "Задача", "Сфера"]],
       body: tableData,
-      styles: { fontSize: 10, cellPadding: 3 },
+      styles: { fontSize: 10, cellPadding: 3, font: "Roboto" },
       headStyles: { fillColor: [107, 142, 87] },
       columnStyles: {
-        0: { cellWidth: 20, fontStyle: "bold" },
-        1: { cellWidth: 130 },
+        0: { cellWidth: 25, fontStyle: "bold" },
+        1: { cellWidth: 120 },
         2: { cellWidth: 30 },
       },
     });
