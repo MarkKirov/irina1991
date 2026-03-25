@@ -9,9 +9,13 @@ const Landing = () => {
   const { getStep } = useCurrentStep();
 
   useEffect(() => {
-    const saved = getStep();
-    if (saved && saved !== "/") {
-      navigate(saved, { replace: true });
+    const navType = window.performance?.getEntriesByType?.("navigation")?.[0] as PerformanceNavigationTiming | undefined;
+    const isDirectLoad = !navType || navType.type === "navigate" || navType.type === "reload";
+    if (isDirectLoad) {
+      const saved = getStep();
+      if (saved && saved !== "/") {
+        navigate(saved, { replace: true });
+      }
     }
   }, []);
 
