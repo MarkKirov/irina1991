@@ -1,21 +1,21 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowRight, Clock, Sparkles, Heart } from "lucide-react";
 import coachPhoto from "@/assets/coach-irina.png";
 import { useCurrentStep } from "@/context/TaskContext";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { getStep } = useCurrentStep();
 
   useEffect(() => {
-    const navType = window.performance?.getEntriesByType?.("navigation")?.[0] as PerformanceNavigationTiming | undefined;
-    const isDirectLoad = !navType || navType.type === "navigate" || navType.type === "reload";
-    if (isDirectLoad) {
-      const saved = getStep();
-      if (saved && saved !== "/") {
-        navigate(saved, { replace: true });
-      }
+    // Only auto-redirect if user arrived here directly (not via back button)
+    // location.state will have "fromBack" if navigated via back button
+    if (location.state?.fromBack) return;
+    const saved = getStep();
+    if (saved && saved !== "/") {
+      navigate(saved, { replace: true });
     }
   }, []);
 
