@@ -377,7 +377,7 @@ const Dashboard = () => {
               )}
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+            <div className="flex lg:grid lg:grid-cols-7 gap-2 overflow-x-auto pb-2 snap-x snap-mandatory" style={{ scrollbarWidth: 'thin' }}>
               {DAYS.map((day) => {
                 const dt = dayTasks(day);
                 const isSelected = day === selectedDay;
