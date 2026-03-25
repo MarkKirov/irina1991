@@ -298,7 +298,7 @@ const Dashboard = () => {
                   onChange={(e) => setNewTaskText(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && newTaskText.trim()) {
-                      addTask(newTaskText.trim(), newTaskCategory);
+                      addTask(newTaskText.trim(), newTaskCategory, "routine");
                       setNewTaskText("");
                     }
                   }}
