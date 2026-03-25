@@ -24,7 +24,7 @@ const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 const MONTH = "Месяц";
 
 const Dashboard = () => {
-  const { tasks, assignDay, toggleDone, unassignDay, goal } = useTaskContext();
+  const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber } = useTaskContext();
   const { saveStep } = useCurrentStep();
   const navigate = useNavigate();
 
