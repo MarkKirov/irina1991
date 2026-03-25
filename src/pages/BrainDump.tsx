@@ -1,7 +1,7 @@
 import { useState, useEffect, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTaskContext, useCurrentStep, Category } from "@/context/TaskContext";
-import { ArrowRight, Plus, Target, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowRight, ArrowLeft, Plus, Target, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
 
 const categories: { key: Category; label: string; emoji: string }[] = [
   { key: "home", label: "Дом и семья", emoji: "🏠" },
