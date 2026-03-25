@@ -12,15 +12,25 @@ export interface Task {
   done: boolean;
 }
 
+export interface ArchivedWeek {
+  weekNumber: number;
+  tasks: Task[];
+  goal: string;
+  completedAt: string; // ISO date
+}
+
 interface TaskContextType {
   tasks: Task[];
   goal: string;
+  weekNumber: number;
+  archivedWeeks: ArchivedWeek[];
   setGoal: (goal: string) => void;
   addTask: (text: string, category: Category) => void;
   setPriority: (id: string, priority: Priority) => void;
   assignDay: (id: string, day: string) => void;
   toggleDone: (id: string) => void;
   unassignDay: (id: string) => void;
+  startNextWeek: () => void;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -34,6 +44,8 @@ export const useTaskContext = () => {
 const STORAGE_KEY_TASKS = "irina_tasks";
 const STORAGE_KEY_GOAL = "irina_goal";
 const STORAGE_KEY_STEP = "irina_step";
+const STORAGE_KEY_WEEK = "irina_week";
+const STORAGE_KEY_ARCHIVE = "irina_archive";
 
 const loadFromStorage = <T,>(key: string, fallback: T): T => {
   try {
@@ -55,8 +67,9 @@ export const useCurrentStep = () => {
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const [tasks, setTasks] = useState<Task[]>(() => loadFromStorage(STORAGE_KEY_TASKS, []));
   const [goal, setGoalState] = useState<string>(() => loadFromStorage(STORAGE_KEY_GOAL, ""));
+  const [weekNumber, setWeekNumber] = useState<number>(() => loadFromStorage(STORAGE_KEY_WEEK, 1));
+  const [archivedWeeks, setArchivedWeeks] = useState<ArchivedWeek[]>(() => loadFromStorage(STORAGE_KEY_ARCHIVE, []));
 
-  // Persist to localStorage on every change
   const setGoal = (g: string) => {
     setGoalState(g);
     localStorage.setItem(STORAGE_KEY_GOAL, JSON.stringify(g));
@@ -85,13 +98,55 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
   };
 
-  // Persist tasks to localStorage whenever they change
+  const startNextWeek = () => {
+    // Archive current week
+    const currentWeekData: ArchivedWeek = {
+      weekNumber,
+      tasks: tasks.filter((t) => t.priority && t.priority !== "drop" && t.day && t.day !== "Месяц"),
+      goal,
+      completedAt: new Date().toISOString(),
+    };
+
+    const newArchive = [...archivedWeeks, currentWeekData];
+    setArchivedWeeks(newArchive);
+    localStorage.setItem(STORAGE_KEY_ARCHIVE, JSON.stringify(newArchive));
+
+    // Reset: undone weekly tasks go back to unassigned, done weekly tasks removed, month tasks stay
+    setTasks((prev) =>
+      prev
+        .filter((t) => {
+          // Keep tasks without priority/day (not yet processed)
+          if (!t.priority || t.priority === "drop") return false;
+          // Keep month tasks
+          if (t.day === "Месяц") return true;
+          // Keep undone weekly tasks (reset their day)
+          if (t.day && !t.done) return true;
+          // Remove done weekly tasks
+          if (t.day && t.done) return false;
+          // Keep unassigned tasks
+          if (!t.day) return true;
+          return true;
+        })
+        .map((t) => {
+          // Reset day for undone weekly tasks
+          if (t.day && t.day !== "Месяц" && !t.done) {
+            return { ...t, day: null };
+          }
+          return t;
+        })
+    );
+
+    const newWeek = weekNumber + 1;
+    setWeekNumber(newWeek);
+    localStorage.setItem(STORAGE_KEY_WEEK, JSON.stringify(newWeek));
+  };
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_TASKS, JSON.stringify(tasks));
   }, [tasks]);
 
   return (
-    <TaskContext.Provider value={{ tasks, goal, setGoal, addTask, setPriority, assignDay, toggleDone, unassignDay }}>
+    <TaskContext.Provider value={{ tasks, goal, weekNumber, archivedWeeks, setGoal, addTask, setPriority, assignDay, toggleDone, unassignDay, startNextWeek }}>
       {children}
     </TaskContext.Provider>
   );

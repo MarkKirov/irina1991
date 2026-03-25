@@ -12,6 +12,7 @@ import {
   X,
   Target,
   Download,
+  ClipboardList,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,7 +24,7 @@ const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 const MONTH = "Месяц";
 
 const Dashboard = () => {
-  const { tasks, assignDay, toggleDone, unassignDay, goal } = useTaskContext();
+  const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber } = useTaskContext();
   const { saveStep } = useCurrentStep();
   const navigate = useNavigate();
 
@@ -264,7 +265,7 @@ const Dashboard = () => {
         )}
 
         <div className="text-center mb-8 space-y-2">
-          <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Шаг 3 из 3</p>
+          <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Неделя {weekNumber} — Шаг 3 из 3</p>
           <h1 className="text-3xl md:text-4xl text-foreground" style={{ lineHeight: 1.15 }}>
             Твой план на неделю
           </h1>
@@ -500,6 +501,15 @@ const Dashboard = () => {
                 Получить совет от Ирины
               </>
             )}
+          </button>
+
+          <button
+            onClick={() => navigate("/report")}
+            disabled={actionable.filter((t) => t.day).length === 0}
+            className="group inline-flex items-center gap-2.5 bg-foreground text-background px-8 py-3.5 rounded-full font-semibold text-sm tracking-wide shadow-lg hover:shadow-xl transition-all duration-200 active:scale-[0.97] disabled:opacity-40 disabled:pointer-events-none"
+          >
+            <ClipboardList className="w-4 h-4" />
+            Отчёт за неделю
           </button>
 
           <button onClick={() => navigate("/")} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
