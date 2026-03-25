@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Circle,
   ArrowRight,
+  ArrowLeft,
   Loader2,
   MessageCircle,
   Target,
@@ -106,6 +107,9 @@ const WeeklyReport = () => {
 
   return (
     <div className="min-h-screen px-4 py-8 md:py-12 max-w-2xl mx-auto">
+      <button onClick={() => navigate("/dashboard")} className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Назад
+      </button>
       {goal && (
         <div className="mb-6 bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 flex items-center gap-2.5 text-sm">
           <Target className="w-4 h-4 text-primary shrink-0" />

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTaskContext, useCurrentStep, Priority, Category } from "@/context/TaskContext";
-import { ArrowRight, Target } from "lucide-react";
+import { ArrowRight, ArrowLeft, Target } from "lucide-react";
 
 const priorities: { value: Priority; label: string; emoji: string; color: string }[] = [
   { value: "urgent", label: "Срочное", emoji: "🔥", color: "bg-red-100 text-red-700 border-red-200 hover:bg-red-200" },
@@ -33,6 +33,9 @@ const Filtering = () => {
 
   return (
     <div className="min-h-screen px-4 py-8 md:py-12 max-w-3xl mx-auto">
+      <button onClick={() => navigate("/dump")} className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Назад
+      </button>
       {goal && (
         <div className="mb-6 mx-auto max-w-md bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 flex items-center gap-2.5 text-sm">
           <Target className="w-4 h-4 text-primary shrink-0" />

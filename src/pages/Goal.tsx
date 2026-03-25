@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTaskContext, useCurrentStep } from "@/context/TaskContext";
-import { ArrowRight, Target, CheckCircle, MessageCircle, Loader2, X } from "lucide-react";
+import { ArrowRight, ArrowLeft, Target, CheckCircle, MessageCircle, Loader2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const goalTips = [
@@ -46,6 +46,9 @@ const Goal = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
+      <button onClick={() => navigate("/")} className="self-start mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Назад
+      </button>
       <div className="max-w-lg w-full flex flex-col items-center text-center space-y-8">
         <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
           <Target className="w-8 h-8 text-primary" />

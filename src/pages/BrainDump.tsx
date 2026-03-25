@@ -1,7 +1,7 @@
 import { useState, useEffect, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTaskContext, useCurrentStep, Category } from "@/context/TaskContext";
-import { ArrowRight, Plus, Target, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowRight, ArrowLeft, Plus, Target, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
 
 const categories: { key: Category; label: string; emoji: string }[] = [
   { key: "home", label: "Дом и семья", emoji: "🏠" },
@@ -55,6 +55,9 @@ const BrainDump = () => {
 
   return (
     <div className="min-h-screen px-4 py-8 md:py-12 max-w-5xl mx-auto">
+      <button onClick={() => navigate("/goal")} className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Назад
+      </button>
       {goal && (
         <div className="mb-6 mx-auto max-w-md bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 flex items-center gap-2.5 text-sm">
           <Target className="w-4 h-4 text-primary shrink-0" />
