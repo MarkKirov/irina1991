@@ -442,6 +442,13 @@ const Dashboard = () => {
               })}
             </div>
 
+            <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex items-start gap-3">
+              <span className="text-xl mt-0.5">✨</span>
+              <p className="text-sm text-foreground leading-relaxed">
+                Дорогая, твой план готов! Теперь каждый день заходи сюда и в конце дня отмечай выполненные задачи — а в конце недели ты получишь подробный отчёт о своих результатах.
+              </p>
+            </div>
+
             {(() => {
               const monthTasks = actionable.filter((t) => t.day === MONTH);
               const isDropTarget = touchSelected !== null;
