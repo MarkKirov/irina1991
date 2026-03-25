@@ -377,7 +377,7 @@ const Dashboard = () => {
               )}
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+            <div className="flex lg:grid lg:grid-cols-7 gap-2 overflow-x-auto pb-2 snap-x snap-mandatory" style={{ scrollbarWidth: 'thin' }}>
               {DAYS.map((day) => {
                 const dt = dayTasks(day);
                 const isSelected = day === selectedDay;
@@ -389,7 +389,7 @@ const Dashboard = () => {
                     onClick={() => handleDayTap(day)}
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={() => handleDrop(day)}
-                    className={`rounded-xl border-2 p-3 min-h-[180px] transition-all duration-200 cursor-pointer ${
+                    className={`rounded-xl border-2 p-3 min-h-[180px] min-w-[120px] snap-start transition-all duration-200 cursor-pointer ${
                       isSelected
                         ? "border-primary bg-primary/5 shadow-sm"
                         : isDropTarget
