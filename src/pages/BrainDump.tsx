@@ -103,8 +103,14 @@ const BrainDump = () => {
 
             <ul className="space-y-1.5 flex-1 min-h-[60px]">
               {catTasks(key).map((t) => (
-                <li key={t.id} className="flex items-center gap-2 bg-background rounded-lg px-3 py-2 text-sm border">
+                <li key={t.id} className="flex items-center gap-2 bg-background rounded-lg px-3 py-2 text-sm border group">
                   <span className="flex-1">{t.text}</span>
+                  <button
+                    onClick={() => removeTask(t.id)}
+                    className="w-5 h-5 rounded flex items-center justify-center text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors shrink-0"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
                 </li>
               ))}
               {catTasks(key).length === 0 && (
