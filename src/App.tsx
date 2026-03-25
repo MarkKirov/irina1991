@@ -8,6 +8,7 @@ import Goal from "./pages/Goal";
 import BrainDump from "./pages/BrainDump";
 import Filtering from "./pages/Filtering";
 import Dashboard from "./pages/Dashboard";
+import WeeklyReport from "./pages/WeeklyReport";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
