@@ -242,6 +242,14 @@ const WeeklyReport = () => {
         </button>
 
         <button
+          onClick={() => navigate("/mentorship")}
+          className="group inline-flex items-center gap-2.5 border-2 border-primary text-primary px-8 py-3.5 rounded-full font-semibold text-sm tracking-wide hover:bg-primary/5 transition-all duration-200 active:scale-[0.97]"
+        >
+          <Sparkles className="w-4 h-4" />
+          Анкета предзаписи в менторскую группу
+        </button>
+
+        <button
           onClick={() => navigate("/dashboard")}
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
