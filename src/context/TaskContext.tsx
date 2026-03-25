@@ -83,6 +83,10 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     ]);
   };
 
+  const removeTask = (id: string) => {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+  };
+
   const setPriority = (id: string, priority: Priority) => {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, priority } : t)));
   };
