@@ -408,7 +408,7 @@ const Dashboard = () => {
                       {dt.map((t) => (
                         <div
                           key={t.id}
-                          className={`flex items-start gap-1.5 rounded-lg px-2 py-1.5 text-xs transition-all duration-150 ${
+                          className={`flex items-start gap-1 rounded-lg px-1.5 py-1 text-[11px] transition-all duration-150 ${
                             t.done ? "bg-primary/10 line-through text-muted-foreground" : "bg-background border"
                           }`}
                         >
@@ -419,9 +419,9 @@ const Dashboard = () => {
                             }}
                             className="mt-0.5 shrink-0 text-primary hover:scale-110 transition-transform active:scale-95"
                           >
-                            {t.done ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
+                            {t.done ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
                           </button>
-                          <span className="flex-1 leading-snug break-words">{t.text}</span>
+                          <span className="flex-1 leading-tight break-words min-w-0">{t.text}</span>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
