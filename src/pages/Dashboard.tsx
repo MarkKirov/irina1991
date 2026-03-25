@@ -15,6 +15,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Category } from "@/context/TaskContext";
 import { supabase } from "@/integrations/supabase/client";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
