@@ -45,9 +45,9 @@ const Filtering = () => {
         <h1 className="text-3xl md:text-4xl text-foreground" style={{ lineHeight: 1.15 }}>
           Расставь приоритеты
         </h1>
-        <p className="text-sm text-muted-foreground max-w-md mx-auto">
-          Отметь каждую задачу. Будь честна — не всё на самом деле срочное!
-        </p>
+      </div>
+      <div className="max-w-md mx-auto mb-2 bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 text-sm text-muted-foreground italic">
+        💡 Совет от Ирины: «Если всё кажется важным — значит, неважно ничего. Выбери то, от чего тебе станет физически легче, когда ты это вычеркнешь».
       </div>
 
       <div className="space-y-8">
