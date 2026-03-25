@@ -46,7 +46,7 @@ const Mentorship = () => {
           Поэтому я&nbsp;приглашаю тебя в&nbsp;среду, где слиться невозможно.
         </p>
 
-        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5 space-y-2">
+        <div className="bg-orange-50 border border-orange-300 rounded-2xl p-5 space-y-2">
           <p className="font-medium text-foreground">
             В&nbsp;апреле я&nbsp;запускаю свою менторскую группу
           </p>
