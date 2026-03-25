@@ -265,7 +265,7 @@ const Dashboard = () => {
         )}
 
         <div className="text-center mb-8 space-y-2">
-          <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Шаг 3 из 3</p>
+          <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Неделя {weekNumber} — Шаг 3 из 3</p>
           <h1 className="text-3xl md:text-4xl text-foreground" style={{ lineHeight: 1.15 }}>
             Твой план на неделю
           </h1>
