@@ -99,7 +99,7 @@ const Mentorship = () => {
           href="https://forms.yandex.ru/u/69c412c6493639599e32938d"
           target="_blank"
           rel="noopener noreferrer"
-          className="group inline-flex items-center gap-2.5 bg-primary text-primary-foreground px-8 py-4 rounded-full font-semibold text-sm tracking-wide shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200 active:scale-[0.97]"
+          className="group inline-flex items-center gap-2.5 bg-orange-500 text-white px-8 py-4 rounded-full font-semibold text-sm tracking-wide shadow-lg shadow-orange-500/20 hover:bg-orange-600 hover:shadow-xl hover:shadow-orange-500/30 transition-all duration-200 active:scale-[0.97]"
         >
           Заполнить анкету предзаписи
           <ExternalLink className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />

@@ -580,6 +580,16 @@ const Dashboard = () => {
             Отчёт за неделю
           </button>
 
+          <a
+            href="https://forms.yandex.ru/u/69c412c6493639599e32938d"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-2.5 bg-orange-500 text-white px-8 py-3.5 rounded-full font-semibold text-sm tracking-wide shadow-lg shadow-orange-500/20 hover:bg-orange-600 hover:shadow-xl hover:shadow-orange-500/30 transition-all duration-200 active:scale-[0.97]"
+          >
+            <ClipboardList className="w-4 h-4" />
+            Анкета предзаписи в менторскую группу
+          </a>
+
           <button onClick={() => navigate("/")} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="w-4 h-4" /> Начать заново
           </button>
