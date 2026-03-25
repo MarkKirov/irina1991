@@ -34,7 +34,7 @@ const TipFromIrina = () => {
 
 const BrainDump = () => {
   const navigate = useNavigate();
-  const { tasks, addTask, goal } = useTaskContext();
+  const { tasks, addTask, removeTask, goal } = useTaskContext();
   const [inputs, setInputs] = useState<Record<Category, string>>({ home: "", work: "", me: "" });
 
   const handleAdd = (cat: Category) => {
