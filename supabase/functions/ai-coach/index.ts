@@ -55,6 +55,10 @@ serve(async (req) => {
     if (type === "goal-review") {
       systemPrompt = goalReviewPrompt;
       userMsg = `Вот цель, которую написала девушка: "${goal}"`;
+    } else if (type === "weekly-report") {
+      systemPrompt = weeklyReportPrompt;
+      const { stats } = body;
+      userMsg = `Главная цель: ${goal || "не указана"}\n\nСтатистика: выполнено ${stats?.done || 0} из ${stats?.total || 0} задач.\nДом: ${stats?.homeStats?.done || 0}/${stats?.homeStats?.total || 0}, Работа: ${stats?.workStats?.done || 0}/${stats?.workStats?.total || 0}, Для себя: ${stats?.meStats?.done || 0}/${stats?.meStats?.total || 0}\n\nПлан на неделю:\n${JSON.stringify(tasks, null, 2)}`;
     } else {
       systemPrompt = weekPlanPrompt;
       userMsg = `Главная цель: ${goal || "не указана"}\n\nВот план на неделю:\n${JSON.stringify(tasks, null, 2)}`;
