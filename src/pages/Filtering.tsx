@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTaskContext, useCurrentStep, Priority, Category } from "@/context/TaskContext";
-import { ArrowRight, Target } from "lucide-react";
+import { ArrowRight, ArrowLeft, Target } from "lucide-react";
 
 const priorities: { value: Priority; label: string; emoji: string; color: string }[] = [
   { value: "urgent", label: "Срочное", emoji: "🔥", color: "bg-red-100 text-red-700 border-red-200 hover:bg-red-200" },
