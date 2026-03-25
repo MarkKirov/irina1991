@@ -13,6 +13,7 @@ import {
   TrendingUp,
   Award,
   RefreshCw,
+  Sparkles,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
