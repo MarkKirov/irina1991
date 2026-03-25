@@ -98,7 +98,7 @@ const Mentorship = () => {
       {/* CTA */}
       <div className="flex flex-col items-center gap-4 mt-10 mb-8">
         <a
-          href="https://forms.gle/PLACEHOLDER"
+          href="https://forms.yandex.ru/u/69c412c6493639599e32938d"
           target="_blank"
           rel="noopener noreferrer"
           className="group inline-flex items-center gap-2.5 bg-primary text-primary-foreground px-8 py-4 rounded-full font-semibold text-sm tracking-wide shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200 active:scale-[0.97]"
