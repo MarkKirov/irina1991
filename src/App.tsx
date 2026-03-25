@@ -23,6 +23,7 @@ const App = () => (
           <Route path="/dump" element={<BrainDump />} />
           <Route path="/filter" element={<Filtering />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/report" element={<WeeklyReport />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
