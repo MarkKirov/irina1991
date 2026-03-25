@@ -13,6 +13,7 @@ import {
   TrendingUp,
   Award,
   RefreshCw,
+  Sparkles,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
@@ -239,6 +240,14 @@ const WeeklyReport = () => {
         >
           <RefreshCw className="w-4 h-4" />
           Спланировать следующую неделю
+        </button>
+
+        <button
+          onClick={() => navigate("/mentorship")}
+          className="group inline-flex items-center gap-2.5 border-2 border-primary text-primary px-8 py-3.5 rounded-full font-semibold text-sm tracking-wide hover:bg-primary/5 transition-all duration-200 active:scale-[0.97]"
+        >
+          <Sparkles className="w-4 h-4" />
+          Анкета предзаписи в менторскую группу
         </button>
 
         <button

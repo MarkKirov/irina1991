@@ -9,6 +9,7 @@ import BrainDump from "./pages/BrainDump";
 import Filtering from "./pages/Filtering";
 import Dashboard from "./pages/Dashboard";
 import WeeklyReport from "./pages/WeeklyReport";
+import Mentorship from "./pages/Mentorship";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/filter" element={<Filtering />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/report" element={<WeeklyReport />} />
+          <Route path="/mentorship" element={<Mentorship />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
