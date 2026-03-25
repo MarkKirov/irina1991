@@ -503,6 +503,15 @@ const Dashboard = () => {
             )}
           </button>
 
+          <button
+            onClick={() => navigate("/report")}
+            disabled={actionable.filter((t) => t.day).length === 0}
+            className="group inline-flex items-center gap-2.5 bg-foreground text-background px-8 py-3.5 rounded-full font-semibold text-sm tracking-wide shadow-lg hover:shadow-xl transition-all duration-200 active:scale-[0.97] disabled:opacity-40 disabled:pointer-events-none"
+          >
+            <ClipboardList className="w-4 h-4" />
+            Отчёт за неделю
+          </button>
+
           <button onClick={() => navigate("/")} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="w-4 h-4" /> Начать заново
           </button>
