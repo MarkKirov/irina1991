@@ -15,6 +15,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Category } from "@/context/TaskContext";
 import { supabase } from "@/integrations/supabase/client";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -24,7 +25,7 @@ const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 const MONTH = "Месяц";
 
 const Dashboard = () => {
-  const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber } = useTaskContext();
+  const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber, addTask } = useTaskContext();
   const { saveStep } = useCurrentStep();
   const navigate = useNavigate();
 
@@ -38,6 +39,9 @@ const Dashboard = () => {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
+  const [newTaskText, setNewTaskText] = useState("");
+  const [newTaskCategory, setNewTaskCategory] = useState<Category>("home");
+  const [showAddTask, setShowAddTask] = useState(false);
   const touchData = useRef<{ id: string; startY: number } | null>(null);
 
   useEffect(() => {
@@ -276,8 +280,62 @@ const Dashboard = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
           <div className="bg-card border rounded-2xl p-5 shadow-sm">
-            <h2 className="text-sm font-semibold mb-3 text-foreground">Нераспределённые задачи</h2>
-            {unassigned.length === 0 ? (
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-foreground">Нераспределённые задачи</h2>
+              <button
+                onClick={() => setShowAddTask(!showAddTask)}
+                className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
+              >
+                {showAddTask ? "Скрыть" : "+ Добавить"}
+              </button>
+            </div>
+
+            {showAddTask && (
+              <div className="mb-3 space-y-2">
+                <input
+                  type="text"
+                  value={newTaskText}
+                  onChange={(e) => setNewTaskText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && newTaskText.trim()) {
+                      addTask(newTaskText.trim(), newTaskCategory, "routine");
+                      setNewTaskText("");
+                    }
+                  }}
+                  placeholder="Новая задача…"
+                  className="w-full bg-background border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                />
+                <div className="flex gap-1.5">
+                  {(["home", "work", "me"] as Category[]).map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setNewTaskCategory(cat)}
+                      className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
+                        newTaskCategory === cat
+                          ? "bg-primary/10 border-primary/30 text-foreground"
+                          : "border-border text-muted-foreground hover:border-primary/20"
+                      }`}
+                    >
+                      {categoryEmoji(cat)} {cat === "home" ? "Дом" : cat === "work" ? "Работа" : "Я"}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => {
+                    if (newTaskText.trim()) {
+                      addTask(newTaskText.trim(), newTaskCategory, "routine");
+                      setNewTaskText("");
+                    }
+                  }}
+                  disabled={!newTaskText.trim()}
+                  className="w-full bg-primary text-primary-foreground text-xs font-medium py-2 rounded-lg disabled:opacity-40 transition-opacity"
+                >
+                  Добавить задачу
+                </button>
+              </div>
+            )}
+
+            {unassigned.length === 0 && !showAddTask ? (
               <div className="text-center py-8 space-y-2">
                 <Sparkles className="w-6 h-6 mx-auto text-primary/60" />
                 <p className="text-xs text-muted-foreground">Все задачи распределены! 🎉</p>

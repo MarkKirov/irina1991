@@ -25,7 +25,7 @@ interface TaskContextType {
   weekNumber: number;
   archivedWeeks: ArchivedWeek[];
   setGoal: (goal: string) => void;
-  addTask: (text: string, category: Category) => void;
+  addTask: (text: string, category: Category, priority?: Priority) => void;
   setPriority: (id: string, priority: Priority) => void;
   assignDay: (id: string, day: string) => void;
   toggleDone: (id: string) => void;
@@ -75,10 +75,10 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem(STORAGE_KEY_GOAL, JSON.stringify(g));
   };
 
-  const addTask = (text: string, category: Category) => {
+  const addTask = (text: string, category: Category, priority: Priority = null) => {
     setTasks((prev) => [
       ...prev,
-      { id: crypto.randomUUID(), text, category, priority: null, day: null, done: false },
+      { id: crypto.randomUUID(), text, category, priority, day: null, done: false },
     ]);
   };
 
