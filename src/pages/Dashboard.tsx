@@ -323,7 +323,7 @@ const Dashboard = () => {
                 <button
                   onClick={() => {
                     if (newTaskText.trim()) {
-                      addTask(newTaskText.trim(), newTaskCategory);
+                      addTask(newTaskText.trim(), newTaskCategory, "routine");
                       setNewTaskText("");
                     }
                   }}
