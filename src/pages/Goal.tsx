@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTaskContext, useCurrentStep } from "@/context/TaskContext";
-import { ArrowRight, Target, CheckCircle, MessageCircle, Loader2, X } from "lucide-react";
+import { ArrowRight, ArrowLeft, Target, CheckCircle, MessageCircle, Loader2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const goalTips = [
