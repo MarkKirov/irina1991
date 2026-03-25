@@ -39,6 +39,9 @@ const Dashboard = () => {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
+  const [newTaskText, setNewTaskText] = useState("");
+  const [newTaskCategory, setNewTaskCategory] = useState<Category>("home");
+  const [showAddTask, setShowAddTask] = useState(false);
   const touchData = useRef<{ id: string; startY: number } | null>(null);
 
   useEffect(() => {
