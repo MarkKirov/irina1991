@@ -442,12 +442,14 @@ const Dashboard = () => {
               })}
             </div>
 
-            <div className="bg-orange-50 border-2 border-orange-400 rounded-2xl p-4 flex items-start gap-3">
-              <span className="text-xl mt-0.5">✨</span>
-              <p className="text-sm text-orange-900 leading-relaxed">
-                Дорогая, твой план готов! Ты только что сделала то, на что у многих уходят месяцы — выгрузила хаос из головы и нашла свои истинные точки роста на ближайшие 7 дней. Чувствуешь, как стало легче дышать? Заходи сюда каждый день для того, чтобы отметить выполненную задачу. В конце недели ты получишь отчет о проделанной работе и оценишь свой прогресс.
-              </p>
-            </div>
+            {unassigned.length === 0 && actionable.length > 0 && (
+              <div className="bg-orange-50 border-2 border-orange-400 rounded-2xl p-4 flex items-start gap-3">
+                <span className="text-xl mt-0.5">✨</span>
+                <p className="text-sm text-orange-900 leading-relaxed">
+                  Дорогая, твой план готов! Ты только что сделала то, на что у многих уходят месяцы — выгрузила хаос из головы и нашла свои истинные точки роста на ближайшие 7 дней. Чувствуешь, как стало легче дышать? Заходи сюда каждый день для того, чтобы отметить выполненную задачу. В конце недели ты получишь отчет о проделанной работе и оценишь свой прогресс.
+                </p>
+              </div>
+            )}
 
             {(() => {
               const monthTasks = actionable.filter((t) => t.day === MONTH);
