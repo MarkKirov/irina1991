@@ -107,7 +107,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     // Archive current week
     const currentWeekData: ArchivedWeek = {
       weekNumber,
-      tasks: tasks.filter((t) => t.priority && t.priority !== "drop" && t.day && t.day !== "Месяц"),
+      tasks: tasks.filter((t) => t.priority && t.priority !== "drop" && t.day && t.day !== "Месяц" && t.day !== "Ежедневно" && t.day !== "Привычка"),
       goal,
       completedAt: new Date().toISOString(),
     };
@@ -123,7 +123,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
           // Keep tasks without priority/day (not yet processed)
           if (!t.priority || t.priority === "drop") return false;
           // Keep month tasks
-          if (t.day === "Месяц") return true;
+          if (t.day === "Месяц" || t.day === "Ежедневно" || t.day === "Привычка") return true;
           // Keep undone weekly tasks (reset their day)
           if (t.day && !t.done) return true;
           // Remove done weekly tasks
@@ -134,7 +134,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         })
         .map((t) => {
           // Reset day for undone weekly tasks
-          if (t.day && t.day !== "Месяц" && !t.done) {
+          if (t.day && t.day !== "Месяц" && t.day !== "Ежедневно" && t.day !== "Привычка" && !t.done) {
             return { ...t, day: null };
           }
           return t;
