@@ -107,7 +107,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     // Archive current week
     const currentWeekData: ArchivedWeek = {
       weekNumber,
-      tasks: tasks.filter((t) => t.priority && t.priority !== "drop" && t.day && t.day !== "Месяц"),
+      tasks: tasks.filter((t) => t.priority && t.priority !== "drop" && t.day && t.day !== "Месяц" && t.day !== "Ежедневно" && t.day !== "Привычка"),
       goal,
       completedAt: new Date().toISOString(),
     };
