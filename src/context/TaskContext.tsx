@@ -134,7 +134,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         })
         .map((t) => {
           // Reset day for undone weekly tasks
-          if (t.day && t.day !== "Месяц" && !t.done) {
+          if (t.day && t.day !== "Месяц" && t.day !== "Ежедневно" && t.day !== "Привычка" && !t.done) {
             return { ...t, day: null };
           }
           return t;
