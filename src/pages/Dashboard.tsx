@@ -515,6 +515,134 @@ const Dashboard = () => {
                 </div>
               );
             })()}
+
+            {/* Делать каждый день */}
+            {(() => {
+              const dailyTasks = actionable.filter((t) => t.day === DAILY);
+              const isDropTarget = touchSelected !== null;
+
+              return (
+                <div
+                  onClick={() => {
+                    if (touchSelected) {
+                      assignDay(touchSelected, DAILY);
+                      setTouchSelected(null);
+                    }
+                  }}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={() => handleDrop(DAILY)}
+                  className={`rounded-xl border-2 p-4 min-h-[80px] transition-all duration-200 cursor-pointer bg-orange-50/60 ${
+                    isDropTarget ? "border-dashed border-orange-300 hover:border-orange-400" : "border-orange-200"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-semibold text-orange-800">🔄 Делать каждый день</span>
+                    {dailyTasks.length > 0 && (
+                      <span className="text-[10px] bg-orange-100 text-orange-600 rounded-full px-1.5 py-0.5">{dailyTasks.length}</span>
+                    )}
+                  </div>
+                  {dailyTasks.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      {dailyTasks.map((t) => (
+                        <div
+                          key={t.id}
+                          className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-all duration-150 ${
+                            t.done ? "bg-orange-100/50 line-through text-muted-foreground" : "bg-background border border-orange-200"
+                          }`}
+                        >
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleDone(t.id);
+                            }}
+                            className="shrink-0 text-orange-500 hover:scale-110 transition-transform active:scale-95"
+                          >
+                            {t.done ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
+                          </button>
+                          <span className="leading-snug">{t.text}</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              unassignDay(t.id);
+                            }}
+                            className="shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors"
+                            title="Вернуть в нераспределённые"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-[10px] text-orange-400 text-center mt-2">{isDropTarget ? "↓ Перенести сюда" : "Рутинные задачи на каждый день"}</p>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* Привычка / навык на месяц */}
+            {(() => {
+              const habitTasks = actionable.filter((t) => t.day === HABIT);
+              const isDropTarget = touchSelected !== null;
+
+              return (
+                <div
+                  onClick={() => {
+                    if (touchSelected) {
+                      assignDay(touchSelected, HABIT);
+                      setTouchSelected(null);
+                    }
+                  }}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={() => handleDrop(HABIT)}
+                  className={`rounded-xl border-2 p-4 min-h-[80px] transition-all duration-200 cursor-pointer bg-orange-50/60 ${
+                    isDropTarget ? "border-dashed border-orange-300 hover:border-orange-400" : "border-orange-200"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-semibold text-orange-800">🌱 Привычка / навык на месяц</span>
+                    {habitTasks.length > 0 && (
+                      <span className="text-[10px] bg-orange-100 text-orange-600 rounded-full px-1.5 py-0.5">{habitTasks.length}</span>
+                    )}
+                  </div>
+                  {habitTasks.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      {habitTasks.map((t) => (
+                        <div
+                          key={t.id}
+                          className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-all duration-150 ${
+                            t.done ? "bg-orange-100/50 line-through text-muted-foreground" : "bg-background border border-orange-200"
+                          }`}
+                        >
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleDone(t.id);
+                            }}
+                            className="shrink-0 text-orange-500 hover:scale-110 transition-transform active:scale-95"
+                          >
+                            {t.done ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
+                          </button>
+                          <span className="leading-snug">{t.text}</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              unassignDay(t.id);
+                            }}
+                            className="shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors"
+                            title="Вернуть в нераспределённые"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-[10px] text-orange-400 text-center mt-2">{isDropTarget ? "↓ Перенести сюда" : "Навык, который развиваешь весь месяц"}</p>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         </div>
 
