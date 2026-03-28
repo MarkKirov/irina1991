@@ -23,6 +23,8 @@ import { robotoBase64 } from "@/fonts/roboto-base64";
 
 const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 const MONTH = "Месяц";
+const DAILY = "Ежедневно";
+const HABIT = "Привычка";
 
 const Dashboard = () => {
   const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber, addTask } = useTaskContext();
