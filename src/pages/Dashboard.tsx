@@ -378,6 +378,13 @@ const Dashboard = () => {
                     <span className="text-xs">{categoryEmoji(t.category)}</span>
                     <span className="flex-1 break-words min-w-0">{t.text}</span>
                     {priorityBadge(t)}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); removeTask(t.id); }}
+                      className="shrink-0 p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                      title="Удалить задачу"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </li>
                 ))}
               </ul>
