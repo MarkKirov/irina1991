@@ -13,6 +13,7 @@ import {
   Target,
   Download,
   ClipboardList,
+  Trash2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Category } from "@/context/TaskContext";
@@ -31,7 +32,7 @@ const TIME_SLOTS = Array.from({ length: 14 }, (_, i) => {
 });
 
 const Dashboard = () => {
-  const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber, addTask, setTaskTime } = useTaskContext();
+  const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber, addTask, setTaskTime, removeTask } = useTaskContext();
   const { saveStep } = useCurrentStep();
   const navigate = useNavigate();
 
@@ -377,6 +378,13 @@ const Dashboard = () => {
                     <span className="text-xs">{categoryEmoji(t.category)}</span>
                     <span className="flex-1 break-words min-w-0">{t.text}</span>
                     {priorityBadge(t)}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); removeTask(t.id); }}
+                      className="shrink-0 p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                      title="Удалить задачу"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </li>
                 ))}
               </ul>
