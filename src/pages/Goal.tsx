@@ -109,6 +109,7 @@ const Goal = () => {
         )}
 
         <div className="flex flex-col items-center gap-3 w-full">
+          <ConsultationButton />
           <button
             onClick={analyzeGoal}
             disabled={!input.trim() || aiLoading}

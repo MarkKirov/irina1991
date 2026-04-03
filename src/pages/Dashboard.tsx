@@ -863,6 +863,10 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+      {/* Consultation button */}
+      <div className="flex justify-center mt-8 mb-12">
+        <ConsultationButton />
+      </div>
     </>
   );
 };

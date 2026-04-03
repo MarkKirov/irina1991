@@ -124,7 +124,8 @@ const BrainDump = () => {
         ))}
       </div>
 
-      <div className="flex justify-center mt-10">
+      <div className="flex flex-col items-center gap-4 mt-10">
+        <ConsultationButton />
         <button
           onClick={() => navigate("/filter")}
           disabled={tasks.length === 0}
