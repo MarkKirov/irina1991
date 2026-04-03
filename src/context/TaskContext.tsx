@@ -105,6 +105,10 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
   };
 
+  const setTaskTime = (id: string, time: string | null) => {
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, time } : t)));
+  };
+
   const startNextWeek = () => {
     // Archive current week
     const currentWeekData: ArchivedWeek = {
