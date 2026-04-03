@@ -281,6 +281,9 @@ const Dashboard = () => {
           <p className="text-sm text-muted-foreground">
             {touchSelected ? "✨ Задача выбрана — нажми на день, чтобы назначить" : "Нажми на задачу, затем на день — или перетащи (на ПК)."}
           </p>
+          <p className="text-xs text-muted-foreground/70 mt-1">
+            Чтобы убрать задачу со дня недели, нажми на крестик рядом с задачей.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
