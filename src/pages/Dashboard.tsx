@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useTaskContext, useCurrentStep, Task } from "@/context/TaskContext";
 import { Progress } from "@/components/ui/progress";
 import {
