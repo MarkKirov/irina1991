@@ -31,7 +31,7 @@ const TIME_SLOTS = Array.from({ length: 14 }, (_, i) => {
 });
 
 const Dashboard = () => {
-  const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber, addTask, setTaskTime } = useTaskContext();
+  const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber, addTask, setTaskTime, removeTask } = useTaskContext();
   const { saveStep } = useCurrentStep();
   const navigate = useNavigate();
 
