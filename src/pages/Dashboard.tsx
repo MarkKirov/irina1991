@@ -87,9 +87,10 @@ const Dashboard = () => {
     setTouchSelected((prev) => (prev === id ? null : id));
   };
 
-  const handleDayTap = (day: string) => {
+  const handleDayTap = (day: string, time?: string) => {
     if (touchSelected) {
       assignDay(touchSelected, day);
+      if (time) setTaskTime(touchSelected, time);
       setTouchSelected(null);
     } else {
       setSelectedDay(day);
