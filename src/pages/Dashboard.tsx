@@ -25,6 +25,10 @@ const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 const MONTH = "Месяц";
 const DAILY = "Ежедневно";
 const HABIT = "Привычка";
+const TIME_SLOTS = Array.from({ length: 14 }, (_, i) => {
+  const hour = 8 + i;
+  return `${hour.toString().padStart(2, "0")}:00`;
+});
 
 const Dashboard = () => {
   const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber, addTask, setTaskTime } = useTaskContext();
