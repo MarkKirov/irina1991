@@ -465,7 +465,7 @@ const Dashboard = () => {
                         </div>
                       );
                     })}
-                  </>
+                  </React.Fragment>
                 ))}
 
                 {/* "No time" row for tasks assigned to a day but without a time */}
