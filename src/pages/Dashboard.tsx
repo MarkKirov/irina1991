@@ -27,7 +27,7 @@ const DAILY = "Ежедневно";
 const HABIT = "Привычка";
 
 const Dashboard = () => {
-  const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber, addTask } = useTaskContext();
+  const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber, addTask, setTaskTime } = useTaskContext();
   const { saveStep } = useCurrentStep();
   const navigate = useNavigate();
 
@@ -281,6 +281,9 @@ const Dashboard = () => {
           <p className="text-sm text-muted-foreground">
             {touchSelected ? "✨ Задача выбрана — нажми на день, чтобы назначить" : "Нажми на задачу, затем на день — или перетащи (на ПК)."}
           </p>
+          <p className="text-xs text-muted-foreground/70 mt-1">
+            Чтобы убрать задачу со дня недели, нажми на крестик рядом с задачей.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
@@ -359,7 +362,7 @@ const Dashboard = () => {
                   >
                     <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0" />
                     <span className="text-xs">{categoryEmoji(t.category)}</span>
-                    <span className="flex-1 truncate">{t.text}</span>
+                    <span className="flex-1 break-words min-w-0">{t.text}</span>
                     {priorityBadge(t)}
                   </li>
                 ))}
@@ -407,33 +410,53 @@ const Dashboard = () => {
                     </div>
 
                     <div className="space-y-1.5">
-                      {dt.map((t) => (
+                      {dt
+                        .sort((a, b) => {
+                          if (!a.time && !b.time) return 0;
+                          if (!a.time) return 1;
+                          if (!b.time) return -1;
+                          return a.time.localeCompare(b.time);
+                        })
+                        .map((t) => (
                         <div
                           key={t.id}
-                          className={`flex items-start gap-1 rounded-lg px-1.5 py-1 text-[11px] transition-all duration-150 ${
+                          className={`flex flex-col rounded-lg px-1.5 py-1 text-[11px] transition-all duration-150 ${
                             t.done ? "bg-primary/10 line-through text-muted-foreground" : "bg-background border"
                           }`}
                         >
-                          <button
-                            onClick={(e) => {
+                          <div className="flex items-start gap-1">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleDone(t.id);
+                              }}
+                              className="mt-0.5 shrink-0 text-primary hover:scale-110 transition-transform active:scale-95"
+                            >
+                              {t.done ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
+                            </button>
+                            <span className="flex-1 leading-tight break-words min-w-0">{t.text}</span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                unassignDay(t.id);
+                              }}
+                              className="mt-0.5 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors"
+                              title="Вернуть в нераспределённые"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                          <input
+                            type="time"
+                            value={t.time || ""}
+                            onChange={(e) => {
                               e.stopPropagation();
-                              toggleDone(t.id);
+                              setTaskTime(t.id, e.target.value || null);
                             }}
-                            className="mt-0.5 shrink-0 text-primary hover:scale-110 transition-transform active:scale-95"
-                          >
-                            {t.done ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
-                          </button>
-                          <span className="flex-1 leading-tight break-words min-w-0">{t.text}</span>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              unassignDay(t.id);
-                            }}
-                            className="mt-0.5 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors"
-                            title="Вернуть в нераспределённые"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
+                            onClick={(e) => e.stopPropagation()}
+                            className="ml-4 mt-0.5 text-[10px] text-muted-foreground bg-transparent border-none outline-none w-16 cursor-pointer"
+                            title="Назначить время"
+                          />
                         </div>
                       ))}
                     </div>

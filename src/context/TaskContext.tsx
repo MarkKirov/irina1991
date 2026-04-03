@@ -9,6 +9,7 @@ export interface Task {
   category: Category;
   priority: Priority;
   day: string | null;
+  time: string | null;
   done: boolean;
 }
 
@@ -31,6 +32,7 @@ interface TaskContextType {
   assignDay: (id: string, day: string) => void;
   toggleDone: (id: string) => void;
   unassignDay: (id: string) => void;
+  setTaskTime: (id: string, time: string | null) => void;
   startNextWeek: () => void;
 }
 
@@ -79,7 +81,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const addTask = (text: string, category: Category, priority: Priority = null) => {
     setTasks((prev) => [
       ...prev,
-      { id: crypto.randomUUID(), text, category, priority, day: null, done: false },
+      { id: crypto.randomUUID(), text, category, priority, day: null, time: null, done: false },
     ]);
   };
 
@@ -101,6 +103,10 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
 
   const toggleDone = (id: string) => {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
+  };
+
+  const setTaskTime = (id: string, time: string | null) => {
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, time } : t)));
   };
 
   const startNextWeek = () => {
@@ -151,7 +157,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   }, [tasks]);
 
   return (
-    <TaskContext.Provider value={{ tasks, goal, weekNumber, archivedWeeks, setGoal, addTask, removeTask, setPriority, assignDay, toggleDone, unassignDay, startNextWeek }}>
+    <TaskContext.Provider value={{ tasks, goal, weekNumber, archivedWeeks, setGoal, addTask, removeTask, setPriority, assignDay, toggleDone, unassignDay, setTaskTime, startNextWeek }}>
       {children}
     </TaskContext.Provider>
   );
