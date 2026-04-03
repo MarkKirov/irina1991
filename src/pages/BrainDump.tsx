@@ -2,6 +2,7 @@ import { useState, useEffect, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTaskContext, useCurrentStep, Category } from "@/context/TaskContext";
 import { ArrowRight, ArrowLeft, Plus, Target, Lightbulb, ChevronDown, ChevronUp, X } from "lucide-react";
+import ConsultationButton from "@/components/ConsultationButton";
 
 const categories: { key: Category; label: string; emoji: string }[] = [
   { key: "home", label: "Дом и семья", emoji: "🏠" },
