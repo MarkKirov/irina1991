@@ -27,7 +27,7 @@ const DAILY = "Ежедневно";
 const HABIT = "Привычка";
 
 const Dashboard = () => {
-  const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber, addTask } = useTaskContext();
+  const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber, addTask, setTaskTime } = useTaskContext();
   const { saveStep } = useCurrentStep();
   const navigate = useNavigate();
 
