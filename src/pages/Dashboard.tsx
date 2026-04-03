@@ -149,22 +149,28 @@ const Dashboard = () => {
 
     [...DAYS, MONTH].forEach((day) => {
       const label = day === MONTH ? "В течение месяца" : day;
-      const dt = dayTasks(day);
+      const dt = dayTasks(day).slice().sort((a, b) => {
+        if (!a.time && !b.time) return 0;
+        if (!a.time) return 1;
+        if (!b.time) return -1;
+        return a.time.localeCompare(b.time);
+      });
 
       if (dt.length > 0) {
         dt.forEach((t, i) => {
           const status = t.done ? "✓" : "○";
           const cat = t.category === "home" ? "Дом" : t.category === "work" ? "Работа" : "Для себя";
-          tableData.push([i === 0 ? label : "", `${status} ${t.text}`, cat]);
+          const timeLabel = t.time || "—";
+          tableData.push([i === 0 ? label : "", timeLabel, `${status} ${t.text}`, cat]);
         });
       } else if (day !== MONTH) {
-        tableData.push([label, "—", ""]);
+        tableData.push([label, "", "—", ""]);
       }
     });
 
     autoTable(doc, {
       startY: goal ? 34 : 28,
-      head: [["День", "Задача", "Сфера"]],
+      head: [["День", "Время", "Задача", "Сфера"]],
       body: tableData,
       styles: {
         fontSize: 10,
@@ -179,9 +185,10 @@ const Dashboard = () => {
         fontStyle: "bold",
       },
       columnStyles: {
-        0: { cellWidth: 25, font: "Roboto", fontStyle: "normal" },
-        1: { cellWidth: 120, font: "Roboto", fontStyle: "normal" },
-        2: { cellWidth: 30, font: "Roboto", fontStyle: "normal" },
+        0: { cellWidth: 22, font: "Roboto", fontStyle: "normal" },
+        1: { cellWidth: 18, font: "Roboto", fontStyle: "normal" },
+        2: { cellWidth: 110, font: "Roboto", fontStyle: "normal" },
+        3: { cellWidth: 25, font: "Roboto", fontStyle: "normal" },
       },
     });
 
