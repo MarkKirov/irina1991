@@ -75,9 +75,10 @@ const Dashboard = () => {
 
   const handleDragStart = (id: string) => setDragging(id);
 
-  const handleDrop = (day: string) => {
+  const handleDrop = (day: string, time?: string) => {
     if (dragging) {
       assignDay(dragging, day);
+      if (time) setTaskTime(dragging, time);
       setDragging(null);
     }
   };
