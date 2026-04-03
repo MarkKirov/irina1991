@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useTaskContext, useCurrentStep, Task } from "@/context/TaskContext";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -25,6 +25,10 @@ const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 const MONTH = "Месяц";
 const DAILY = "Ежедневно";
 const HABIT = "Привычка";
+const TIME_SLOTS = Array.from({ length: 14 }, (_, i) => {
+  const hour = 8 + i;
+  return `${hour.toString().padStart(2, "0")}:00`;
+});
 
 const Dashboard = () => {
   const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber, addTask, setTaskTime } = useTaskContext();
@@ -71,9 +75,10 @@ const Dashboard = () => {
 
   const handleDragStart = (id: string) => setDragging(id);
 
-  const handleDrop = (day: string) => {
+  const handleDrop = (day: string, time?: string) => {
     if (dragging) {
       assignDay(dragging, day);
+      if (time) setTaskTime(dragging, time);
       setDragging(null);
     }
   };
@@ -82,9 +87,10 @@ const Dashboard = () => {
     setTouchSelected((prev) => (prev === id ? null : id));
   };
 
-  const handleDayTap = (day: string) => {
+  const handleDayTap = (day: string, time?: string) => {
     if (touchSelected) {
       assignDay(touchSelected, day);
+      if (time) setTaskTime(touchSelected, time);
       setTouchSelected(null);
     } else {
       setSelectedDay(day);
@@ -382,89 +388,136 @@ const Dashboard = () => {
               )}
             </div>
 
-            <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5 sm:gap-2">
-              {DAYS.map((day) => {
-                const dt = dayTasks(day);
-                const isSelected = day === selectedDay;
-                const isDropTarget = touchSelected !== null;
-
-                return (
-                  <div
-                    key={day}
-                    onClick={() => handleDayTap(day)}
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={() => handleDrop(day)}
-                    className={`rounded-xl border-2 p-2 sm:p-3 min-h-[100px] sm:min-h-[180px] transition-all duration-200 cursor-pointer ${
-                      isSelected
-                        ? "border-primary bg-primary/5 shadow-sm"
-                        : isDropTarget
-                          ? "border-dashed border-primary/40 bg-primary/5 hover:border-primary"
-                          : "border-transparent bg-card hover:border-border"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className={`text-xs font-semibold tracking-wide ${isSelected ? "text-primary" : "text-muted-foreground"}`}>{day}</span>
+            <div className="overflow-x-auto -mx-4 px-4">
+              <div className="inline-grid min-w-[900px] w-full" style={{ gridTemplateColumns: "60px repeat(7, 1fr)" }}>
+                {/* Header row */}
+                <div className="sticky top-0 bg-background z-10 border-b border-border p-2" />
+                {DAYS.map((day) => {
+                  const dt = dayTasks(day);
+                  return (
+                    <div
+                      key={day}
+                      className={`sticky top-0 bg-background z-10 border-b border-border p-2 text-center ${
+                        day === selectedDay ? "bg-primary/5" : ""
+                      }`}
+                    >
+                      <span className={`text-xs font-semibold tracking-wide ${day === selectedDay ? "text-primary" : "text-muted-foreground"}`}>
+                        {day}
+                      </span>
                       {dt.length > 0 && (
-                        <span className="text-[10px] bg-muted text-muted-foreground rounded-full px-1.5 py-0.5">{dt.length}</span>
+                        <span className="ml-1 text-[10px] bg-muted text-muted-foreground rounded-full px-1.5 py-0.5">{dt.length}</span>
                       )}
                     </div>
+                  );
+                })}
 
-                    <div className="space-y-1.5">
-                      {dt
-                        .sort((a, b) => {
-                          if (!a.time && !b.time) return 0;
-                          if (!a.time) return 1;
-                          if (!b.time) return -1;
-                          return a.time.localeCompare(b.time);
-                        })
-                        .map((t) => (
+                {/* Time slot rows */}
+                {TIME_SLOTS.map((slot) => (
+                  <React.Fragment key={slot}>
+                    {/* Time label */}
+                    <div key={`label-${slot}`} className="border-b border-border/50 px-2 py-1 flex items-start">
+                      <span className="text-[10px] text-muted-foreground font-medium">{slot}</span>
+                    </div>
+
+                    {/* Day cells for this time slot */}
+                    {DAYS.map((day) => {
+                      const slotTasks = actionable.filter((t) => t.day === day && t.time === slot);
+                      const isDropTarget = touchSelected !== null || dragging !== null;
+
+                      return (
+                        <div
+                          key={`${day}-${slot}`}
+                          onClick={() => handleDayTap(day, slot)}
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={() => handleDrop(day, slot)}
+                          className={`border-b border-l border-border/30 min-h-[44px] p-0.5 transition-colors duration-100 cursor-pointer ${
+                            isDropTarget ? "hover:bg-primary/10" : "hover:bg-muted/30"
+                          } ${day === selectedDay ? "bg-primary/[0.02]" : ""}`}
+                        >
+                          {slotTasks.map((t) => (
+                            <div
+                              key={t.id}
+                              className={`flex items-start gap-1 rounded px-1.5 py-1 text-[11px] mb-0.5 transition-all duration-150 ${
+                                t.done ? "bg-primary/10 line-through text-muted-foreground" : "bg-primary/5 border border-primary/20"
+                              }`}
+                            >
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleDone(t.id);
+                                }}
+                                className="mt-0.5 shrink-0 text-primary hover:scale-110 transition-transform"
+                              >
+                                {t.done ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
+                              </button>
+                              <span className="flex-1 leading-tight break-words min-w-0">{t.text}</span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  unassignDay(t.id);
+                                }}
+                                className="mt-0.5 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
+
+                {/* "No time" row for tasks assigned to a day but without a time */}
+                <div className="border-b border-border/50 px-2 py-1 flex items-start">
+                  <span className="text-[10px] text-muted-foreground/60 font-medium">—</span>
+                </div>
+                {DAYS.map((day) => {
+                  const noTimeTasks = actionable.filter((t) => t.day === day && !t.time);
+                  const isDropTarget = touchSelected !== null || dragging !== null;
+
+                  return (
+                    <div
+                      key={`${day}-notime`}
+                      onClick={() => handleDayTap(day)}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={() => handleDrop(day)}
+                      className={`border-b border-l border-border/30 min-h-[44px] p-0.5 transition-colors duration-100 cursor-pointer ${
+                        isDropTarget ? "hover:bg-primary/10" : "hover:bg-muted/30"
+                      } ${day === selectedDay ? "bg-primary/[0.02]" : ""}`}
+                    >
+                      {noTimeTasks.map((t) => (
                         <div
                           key={t.id}
-                          className={`flex flex-col rounded-lg px-1.5 py-1 text-[11px] transition-all duration-150 ${
-                            t.done ? "bg-primary/10 line-through text-muted-foreground" : "bg-background border"
+                          className={`flex items-start gap-1 rounded px-1.5 py-1 text-[11px] mb-0.5 transition-all duration-150 ${
+                            t.done ? "bg-primary/10 line-through text-muted-foreground" : "bg-muted/50 border border-border"
                           }`}
                         >
-                          <div className="flex items-start gap-1">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleDone(t.id);
-                              }}
-                              className="mt-0.5 shrink-0 text-primary hover:scale-110 transition-transform active:scale-95"
-                            >
-                              {t.done ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
-                            </button>
-                            <span className="flex-1 leading-tight break-words min-w-0">{t.text}</span>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                unassignDay(t.id);
-                              }}
-                              className="mt-0.5 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors"
-                              title="Вернуть в нераспределённые"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                          <input
-                            type="time"
-                            value={t.time || ""}
-                            onChange={(e) => {
+                          <button
+                            onClick={(e) => {
                               e.stopPropagation();
-                              setTaskTime(t.id, e.target.value || null);
+                              toggleDone(t.id);
                             }}
-                            onClick={(e) => e.stopPropagation()}
-                            className="ml-4 mt-0.5 text-[10px] text-muted-foreground bg-transparent border-none outline-none w-16 cursor-pointer"
-                            title="Назначить время"
-                          />
+                            className="mt-0.5 shrink-0 text-primary hover:scale-110 transition-transform"
+                          >
+                            {t.done ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
+                          </button>
+                          <span className="flex-1 leading-tight break-words min-w-0">{t.text}</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              unassignDay(t.id);
+                            }}
+                            className="mt-0.5 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
                         </div>
                       ))}
                     </div>
-
-                    {dt.length === 0 && <p className="text-[10px] text-muted-foreground/40 text-center mt-8">{isDropTarget ? "↓ Назначить сюда" : "Перетащи сюда"}</p>}
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
 
             {unassigned.length === 0 && actionable.length > 0 && (
