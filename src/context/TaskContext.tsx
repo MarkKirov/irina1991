@@ -32,6 +32,7 @@ interface TaskContextType {
   assignDay: (id: string, day: string) => void;
   toggleDone: (id: string) => void;
   unassignDay: (id: string) => void;
+  setTaskTime: (id: string, time: string | null) => void;
   startNextWeek: () => void;
 }
 
