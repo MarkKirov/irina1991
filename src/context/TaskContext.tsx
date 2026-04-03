@@ -81,7 +81,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const addTask = (text: string, category: Category, priority: Priority = null) => {
     setTasks((prev) => [
       ...prev,
-      { id: crypto.randomUUID(), text, category, priority, day: null, done: false },
+      { id: crypto.randomUUID(), text, category, priority, day: null, time: null, done: false },
     ]);
   };
 
