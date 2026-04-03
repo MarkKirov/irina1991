@@ -359,7 +359,7 @@ const Dashboard = () => {
                   >
                     <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0" />
                     <span className="text-xs">{categoryEmoji(t.category)}</span>
-                    <span className="flex-1 truncate">{t.text}</span>
+                    <span className="flex-1 break-words min-w-0">{t.text}</span>
                     {priorityBadge(t)}
                   </li>
                 ))}
