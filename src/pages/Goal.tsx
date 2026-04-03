@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTaskContext, useCurrentStep } from "@/context/TaskContext";
 import { ArrowRight, ArrowLeft, Target, CheckCircle, MessageCircle, Loader2, X } from "lucide-react";
+import ConsultationButton from "@/components/ConsultationButton";
 import { supabase } from "@/integrations/supabase/client";
 
 const goalTips = [
@@ -108,6 +109,7 @@ const Goal = () => {
         )}
 
         <div className="flex flex-col items-center gap-3 w-full">
+          <ConsultationButton />
           <button
             onClick={analyzeGoal}
             disabled={!input.trim() || aiLoading}

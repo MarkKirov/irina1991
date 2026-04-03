@@ -2,6 +2,7 @@ import { useState, useEffect, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTaskContext, useCurrentStep, Category } from "@/context/TaskContext";
 import { ArrowRight, ArrowLeft, Plus, Target, Lightbulb, ChevronDown, ChevronUp, X } from "lucide-react";
+import ConsultationButton from "@/components/ConsultationButton";
 
 const categories: { key: Category; label: string; emoji: string }[] = [
   { key: "home", label: "Дом и семья", emoji: "🏠" },
@@ -123,7 +124,8 @@ const BrainDump = () => {
         ))}
       </div>
 
-      <div className="flex justify-center mt-10">
+      <div className="flex flex-col items-center gap-4 mt-10">
+        <ConsultationButton />
         <button
           onClick={() => navigate("/filter")}
           disabled={tasks.length === 0}

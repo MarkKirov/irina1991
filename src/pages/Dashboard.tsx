@@ -18,6 +18,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Category } from "@/context/TaskContext";
 import { supabase } from "@/integrations/supabase/client";
+import ConsultationButton from "@/components/ConsultationButton";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { robotoBase64 } from "@/fonts/roboto-base64";
@@ -862,6 +863,10 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+      {/* Consultation button */}
+      <div className="flex justify-center mt-8 mb-12">
+        <ConsultationButton />
+      </div>
     </>
   );
 };
