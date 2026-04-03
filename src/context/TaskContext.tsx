@@ -9,6 +9,7 @@ export interface Task {
   category: Category;
   priority: Priority;
   day: string | null;
+  time: string | null;
   done: boolean;
 }
 
