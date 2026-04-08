@@ -408,7 +408,7 @@ const Dashboard = () => {
             <div className="overflow-x-auto -mx-4 px-4">
               <div className="inline-grid min-w-[900px] w-full" style={{ gridTemplateColumns: "60px repeat(7, 1fr)" }}>
                 {/* Header row */}
-                <div className="sticky top-0 bg-background z-10 border-b border-border p-2" />
+                <div className="sticky top-0 left-0 bg-background z-20 border-b border-border p-2" />
                 {DAYS.map((day) => {
                   const dt = dayTasks(day);
                   return (
