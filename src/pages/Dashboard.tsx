@@ -14,6 +14,7 @@ import {
   Download,
   ClipboardList,
   Trash2,
+  Copy,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Category } from "@/context/TaskContext";
@@ -380,6 +381,13 @@ const Dashboard = () => {
                     <span className="flex-1 break-words min-w-0">{t.text}</span>
                     {priorityBadge(t)}
                     <button
+                      onClick={(e) => { e.stopPropagation(); addTask(t.text, t.category, t.priority); }}
+                      className="shrink-0 p-1 rounded hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                      title="Дублировать задачу"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </button>
+                    <button
                       onClick={(e) => { e.stopPropagation(); removeTask(t.id); }}
                       className="shrink-0 p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
                       title="Удалить задачу"
@@ -407,7 +415,7 @@ const Dashboard = () => {
             <div className="overflow-x-auto -mx-4 px-4">
               <div className="inline-grid min-w-[900px] w-full" style={{ gridTemplateColumns: "60px repeat(7, 1fr)" }}>
                 {/* Header row */}
-                <div className="sticky top-0 bg-background z-10 border-b border-border p-2" />
+                <div className="sticky top-0 left-0 bg-background z-20 border-b border-border p-2" />
                 {DAYS.map((day) => {
                   const dt = dayTasks(day);
                   return (
@@ -431,7 +439,7 @@ const Dashboard = () => {
                 {TIME_SLOTS.map((slot) => (
                   <React.Fragment key={slot}>
                     {/* Time label */}
-                    <div key={`label-${slot}`} className="border-b border-border/50 px-2 py-1 flex items-start">
+                    <div key={`label-${slot}`} className="sticky left-0 z-10 bg-background border-b border-border/50 px-2 py-1 flex items-start">
                       <span className="text-[10px] text-muted-foreground font-medium">{slot}</span>
                     </div>
 
@@ -485,7 +493,7 @@ const Dashboard = () => {
                 ))}
 
                 {/* "No time" row for tasks assigned to a day but without a time */}
-                <div className="border-b border-border/50 px-2 py-1 flex items-start">
+                <div className="sticky left-0 z-10 bg-background border-b border-border/50 px-2 py-1 flex items-start">
                   <span className="text-[10px] text-muted-foreground/60 font-medium">—</span>
                 </div>
                 {DAYS.map((day) => {
