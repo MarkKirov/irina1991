@@ -14,6 +14,7 @@ import {
   Download,
   ClipboardList,
   Trash2,
+  Copy,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Category } from "@/context/TaskContext";
