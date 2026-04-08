@@ -432,7 +432,7 @@ const Dashboard = () => {
                 {TIME_SLOTS.map((slot) => (
                   <React.Fragment key={slot}>
                     {/* Time label */}
-                    <div key={`label-${slot}`} className="border-b border-border/50 px-2 py-1 flex items-start">
+                    <div key={`label-${slot}`} className="sticky left-0 z-10 bg-background border-b border-border/50 px-2 py-1 flex items-start">
                       <span className="text-[10px] text-muted-foreground font-medium">{slot}</span>
                     </div>
 
