@@ -486,7 +486,7 @@ const Dashboard = () => {
                 ))}
 
                 {/* "No time" row for tasks assigned to a day but without a time */}
-                <div className="border-b border-border/50 px-2 py-1 flex items-start">
+                <div className="sticky left-0 z-10 bg-background border-b border-border/50 px-2 py-1 flex items-start">
                   <span className="text-[10px] text-muted-foreground/60 font-medium">—</span>
                 </div>
                 {DAYS.map((day) => {
