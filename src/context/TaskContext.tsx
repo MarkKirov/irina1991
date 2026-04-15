@@ -11,6 +11,7 @@ export interface Task {
   day: string | null;
   time: string | null;
   done: boolean;
+  week: number | null;
 }
 
 export interface ArchivedWeek {
