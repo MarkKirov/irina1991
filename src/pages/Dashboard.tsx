@@ -494,7 +494,7 @@ const Dashboard = () => {
 
                     {/* Day cells for this time slot */}
                     {DAYS.map((day) => {
-                      const slotTasks = actionable.filter((t) => t.day === day && t.time === slot);
+                      const slotTasks = weekFilteredActionable.filter((t) => t.day === day && t.time === slot);
                       const isDropTarget = touchSelected !== null || dragging !== null;
 
                       return (
@@ -546,7 +546,7 @@ const Dashboard = () => {
                   <span className="text-[10px] text-muted-foreground/60 font-medium">—</span>
                 </div>
                 {DAYS.map((day) => {
-                  const noTimeTasks = actionable.filter((t) => t.day === day && !t.time);
+                  const noTimeTasks = weekFilteredActionable.filter((t) => t.day === day && !t.time);
                   const isDropTarget = touchSelected !== null || dragging !== null;
 
                   return (
