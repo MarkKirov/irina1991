@@ -346,8 +346,8 @@ const Dashboard = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
-          <div className="bg-card border rounded-2xl p-5 shadow-sm">
+        <div className={`grid grid-cols-1 ${isNextWeek ? "" : "lg:grid-cols-[280px_1fr]"} gap-6`}>
+          {!isNextWeek && (
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-semibold text-foreground">Нераспределённые задачи</h2>
               <button
