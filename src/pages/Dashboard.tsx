@@ -370,7 +370,7 @@ const Dashboard = () => {
                   onChange={(e) => setNewTaskText(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && newTaskText.trim()) {
-                      addTask(newTaskText.trim(), newTaskCategory, "routine");
+                      addTask(newTaskText.trim(), newTaskCategory, "routine", isNextWeek ? viewingWeek : null);
                       setNewTaskText("");
                     }
                   }}
@@ -395,7 +395,7 @@ const Dashboard = () => {
                 <button
                   onClick={() => {
                     if (newTaskText.trim()) {
-                      addTask(newTaskText.trim(), newTaskCategory, "routine");
+                      addTask(newTaskText.trim(), newTaskCategory, "routine", isNextWeek ? viewingWeek : null);
                       setNewTaskText("");
                     }
                   }}
