@@ -73,15 +73,18 @@ const Dashboard = () => {
   const actionable = tasks.filter((t) => t.priority && t.priority !== "drop");
   // For the weekly grid, filter by viewed week
   const weekFilteredActionable = actionable.filter((t) => {
-    // Tasks without day are unassigned — show in current week view only
-    if (!t.day) return !isNextWeek;
-    // Month/daily/habit tasks show in both weeks
+    // Month/daily/habit tasks show only in current week view
     if (t.day === MONTH || t.day === DAILY || t.day === HABIT) return !isNextWeek;
+    // Tasks without day: show if their week matches or if they have no week (current week only)
+    if (!t.day) {
+      if (isNextWeek) return t.week === viewingWeek;
+      return !t.week || t.week === weekNumber;
+    }
     // Day-assigned tasks: filter by week
     const taskWeek = t.week || weekNumber;
     return taskWeek === viewingWeek;
   });
-  const unassigned = actionable.filter((t) => !t.day);
+  const unassigned = weekFilteredActionable.filter((t) => !t.day);
   const dayTasks = (day: string) => weekFilteredActionable.filter((t) => t.day === day);
 
   const selDayTasks = dayTasks(selectedDay);
