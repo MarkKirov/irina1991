@@ -95,7 +95,7 @@ const Dashboard = () => {
 
   const handleDrop = (day: string, time?: string) => {
     if (dragging) {
-      assignDay(dragging, day);
+      assignDay(dragging, day, viewingWeek);
       if (time) setTaskTime(dragging, time);
       setDragging(null);
     }
@@ -107,7 +107,7 @@ const Dashboard = () => {
 
   const handleDayTap = (day: string, time?: string) => {
     if (touchSelected) {
-      assignDay(touchSelected, day);
+      assignDay(touchSelected, day, viewingWeek);
       if (time) setTaskTime(touchSelected, time);
       setTouchSelected(null);
     } else {
