@@ -114,7 +114,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     // Archive current week
     const currentWeekData: ArchivedWeek = {
       weekNumber,
-      tasks: tasks.filter((t) => t.priority && t.priority !== "drop" && t.day && t.day !== "Месяц" && t.day !== "Ежедневно" && t.day !== "Привычка"),
+      tasks: tasks.filter((t) => t.priority && t.priority !== "drop" && t.day && t.day !== "Месяц" && t.day !== "Ежедневно" && t.day !== "Привычка" && (!t.week || t.week === weekNumber)),
       goal,
       completedAt: new Date().toISOString(),
     };
@@ -123,13 +123,17 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     setArchivedWeeks(newArchive);
     localStorage.setItem(STORAGE_KEY_ARCHIVE, JSON.stringify(newArchive));
 
+    const newWeek = weekNumber + 1;
+
     // Reset: undone weekly tasks go back to unassigned, done weekly tasks removed, month tasks stay
+    // Next-week tasks (week === newWeek) become current week tasks
     setTasks((prev) =>
       prev
         .filter((t) => {
-          // Keep tasks without priority/day (not yet processed)
           if (!t.priority || t.priority === "drop") return false;
-          // Keep month tasks
+          // Keep next-week tasks
+          if (t.week === newWeek) return true;
+          // Keep month/daily/habit tasks
           if (t.day === "Месяц" || t.day === "Ежедневно" || t.day === "Привычка") return true;
           // Keep undone weekly tasks (reset their day)
           if (t.day && !t.done) return true;
@@ -140,15 +144,18 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
           return true;
         })
         .map((t) => {
-          // Reset day for undone weekly tasks
-          if (t.day && t.day !== "Месяц" && t.day !== "Ежедневно" && t.day !== "Привычка" && !t.done) {
-            return { ...t, day: null };
+          // Next-week tasks become current
+          if (t.week === newWeek) {
+            return { ...t, week: newWeek };
+          }
+          // Reset day for undone weekly tasks from current week
+          if (t.day && t.day !== "Месяц" && t.day !== "Ежедневно" && t.day !== "Привычка" && !t.done && (!t.week || t.week === weekNumber)) {
+            return { ...t, day: null, week: null };
           }
           return t;
         })
     );
 
-    const newWeek = weekNumber + 1;
     setWeekNumber(newWeek);
     localStorage.setItem(STORAGE_KEY_WEEK, JSON.stringify(newWeek));
   };
