@@ -94,8 +94,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, priority } : t)));
   };
 
-  const assignDay = (id: string, day: string) => {
-    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, day } : t)));
+  const assignDay = (id: string, day: string, week?: number) => {
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, day, ...(week !== undefined ? { week } : {}) } : t)));
   };
 
   const unassignDay = (id: string) => {
