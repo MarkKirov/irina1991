@@ -79,10 +79,10 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem(STORAGE_KEY_GOAL, JSON.stringify(g));
   };
 
-  const addTask = (text: string, category: Category, priority: Priority = null) => {
+  const addTask = (text: string, category: Category, priority: Priority = null, week: number | null = null) => {
     setTasks((prev) => [
       ...prev,
-      { id: crypto.randomUUID(), text, category, priority, day: null, time: null, done: false },
+      { id: crypto.randomUUID(), text, category, priority, day: null, time: null, done: false, week },
     ]);
   };
 
