@@ -15,6 +15,8 @@ import {
   ClipboardList,
   Trash2,
   Copy,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Category } from "@/context/TaskContext";
@@ -51,7 +53,10 @@ const Dashboard = () => {
   const [newTaskText, setNewTaskText] = useState("");
   const [newTaskCategory, setNewTaskCategory] = useState<Category>("home");
   const [showAddTask, setShowAddTask] = useState(false);
+  const [viewingWeek, setViewingWeek] = useState<number>(weekNumber);
   const touchData = useRef<{ id: string; startY: number } | null>(null);
+
+  const isNextWeek = viewingWeek > weekNumber;
 
   useEffect(() => {
     saveStep("/dashboard");
@@ -66,8 +71,21 @@ const Dashboard = () => {
   }, [pdfUrl]);
 
   const actionable = tasks.filter((t) => t.priority && t.priority !== "drop");
-  const unassigned = actionable.filter((t) => !t.day);
-  const dayTasks = (day: string) => actionable.filter((t) => t.day === day);
+  // For the weekly grid, filter by viewed week
+  const weekFilteredActionable = actionable.filter((t) => {
+    // Month/daily/habit tasks show only in current week view
+    if (t.day === MONTH || t.day === DAILY || t.day === HABIT) return !isNextWeek;
+    // Tasks without day: show if their week matches or if they have no week (current week only)
+    if (!t.day) {
+      if (isNextWeek) return t.week === viewingWeek;
+      return !t.week || t.week === weekNumber;
+    }
+    // Day-assigned tasks: filter by week
+    const taskWeek = t.week || weekNumber;
+    return taskWeek === viewingWeek;
+  });
+  const unassigned = weekFilteredActionable.filter((t) => !t.day);
+  const dayTasks = (day: string) => weekFilteredActionable.filter((t) => t.day === day);
 
   const selDayTasks = dayTasks(selectedDay);
   const doneCount = selDayTasks.filter((t) => t.done).length;
@@ -80,7 +98,7 @@ const Dashboard = () => {
 
   const handleDrop = (day: string, time?: string) => {
     if (dragging) {
-      assignDay(dragging, day);
+      assignDay(dragging, day, viewingWeek);
       if (time) setTaskTime(dragging, time);
       setDragging(null);
     }
@@ -92,7 +110,7 @@ const Dashboard = () => {
 
   const handleDayTap = (day: string, time?: string) => {
     if (touchSelected) {
-      assignDay(touchSelected, day);
+      assignDay(touchSelected, day, viewingWeek);
       if (time) setTaskTime(touchSelected, time);
       setTouchSelected(null);
     } else {
@@ -290,10 +308,39 @@ const Dashboard = () => {
         )}
 
         <div className="text-center mb-8 space-y-2">
-          <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Неделя {weekNumber} — Шаг 3 из 3</p>
+          <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Неделя {viewingWeek} — Шаг 3 из 3</p>
           <h1 className="text-3xl md:text-4xl text-foreground" style={{ lineHeight: 1.15 }}>
-            Твой план на неделю
+            {isNextWeek ? "План на следующую неделю" : "Твой план на неделю"}
           </h1>
+
+          {/* Week switcher */}
+          <div className="flex items-center justify-center gap-3 pt-2">
+            <button
+              onClick={() => setViewingWeek(weekNumber)}
+              disabled={viewingWeek === weekNumber}
+              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                viewingWeek === weekNumber
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Текущая неделя
+            </button>
+            <button
+              onClick={() => setViewingWeek(weekNumber + 1)}
+              disabled={viewingWeek === weekNumber + 1}
+              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                viewingWeek === weekNumber + 1
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              Следующая неделя
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
           <p className="text-sm text-muted-foreground">
             {touchSelected ? "✨ Задача выбрана — нажми на день, чтобы назначить" : "Нажми на задачу, затем на день — или перетащи (на ПК)."}
           </p>
@@ -303,6 +350,7 @@ const Dashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
+          {(
           <div className="bg-card border rounded-2xl p-5 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-semibold text-foreground">Нераспределённые задачи</h2>
@@ -399,6 +447,7 @@ const Dashboard = () => {
               </ul>
             )}
           </div>
+          )}
 
           <div className="space-y-4">
             <div className="bg-card border rounded-2xl p-5 shadow-sm">
@@ -544,7 +593,7 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {unassigned.length === 0 && actionable.length > 0 && (
+            {!isNextWeek && unassigned.length === 0 && actionable.length > 0 && (
               <div className="bg-orange-50 border-2 border-orange-400 rounded-2xl p-4 flex items-start gap-3">
                 <span className="text-xl mt-0.5">✨</span>
                 <p className="text-sm text-orange-900 leading-relaxed">
@@ -553,7 +602,7 @@ const Dashboard = () => {
               </div>
             )}
 
-            {(() => {
+            {!isNextWeek && (() => {
               const monthTasks = actionable.filter((t) => t.day === MONTH);
               const isDropTarget = touchSelected !== null;
 
@@ -616,8 +665,7 @@ const Dashboard = () => {
               );
             })()}
 
-            {/* Делать каждый день */}
-            {(() => {
+            {!isNextWeek && (() => {
               const dailyTasks = actionable.filter((t) => t.day === DAILY);
               const isDropTarget = touchSelected !== null;
 
@@ -680,8 +728,7 @@ const Dashboard = () => {
               );
             })()}
 
-            {/* Привычка / навык на месяц */}
-            {(() => {
+            {!isNextWeek && (() => {
               const habitTasks = actionable.filter((t) => t.day === HABIT);
               const isDropTarget = touchSelected !== null;
 
@@ -775,6 +822,64 @@ const Dashboard = () => {
           </div>
         )}
 
+        {isNextWeek ? (
+          <div className="flex flex-col items-center gap-4 mt-10">
+            <div className="bg-primary/5 border border-primary/20 rounded-2xl px-6 py-4 text-center max-w-md space-y-3">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                📝 Записывай задачи на следующую неделю заранее. Добавь задачу ниже и перетащи её на нужный день.
+              </p>
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={newTaskText}
+                  onChange={(e) => setNewTaskText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && newTaskText.trim()) {
+                      addTask(newTaskText.trim(), newTaskCategory, "routine", viewingWeek);
+                      setNewTaskText("");
+                    }
+                  }}
+                  placeholder="Новая задача на следующую неделю…"
+                  className="w-full bg-background border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                />
+                <div className="flex gap-1.5 justify-center">
+                  {(["home", "work", "me"] as Category[]).map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setNewTaskCategory(cat)}
+                      className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
+                        newTaskCategory === cat
+                          ? "bg-primary/10 border-primary/30 text-foreground"
+                          : "border-border text-muted-foreground hover:border-primary/20"
+                      }`}
+                    >
+                      {categoryEmoji(cat)} {cat === "home" ? "Дом" : cat === "work" ? "Работа" : "Я"}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => {
+                    if (newTaskText.trim()) {
+                      addTask(newTaskText.trim(), newTaskCategory, "routine", viewingWeek);
+                      setNewTaskText("");
+                    }
+                  }}
+                  disabled={!newTaskText.trim()}
+                  className="w-full bg-primary text-primary-foreground text-xs font-medium py-2 rounded-lg disabled:opacity-40 transition-opacity"
+                >
+                  Добавить задачу
+                </button>
+              </div>
+            </div>
+            <button
+              onClick={() => setViewingWeek(weekNumber)}
+              className="group inline-flex items-center gap-2.5 bg-primary text-primary-foreground px-8 py-3.5 rounded-full font-semibold text-sm tracking-wide shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200 active:scale-[0.97]"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Вернуться к текущей неделе
+            </button>
+          </div>
+        ) : (
         <div className="flex flex-col items-center gap-4 mt-10">
           <button
             onClick={generatePDF}
@@ -824,6 +929,7 @@ const Dashboard = () => {
             <ArrowLeft className="w-4 h-4" /> Начать заново
           </button>
         </div>
+        )}
       </div>
 
       {pdfUrl && (
