@@ -819,6 +819,22 @@ const Dashboard = () => {
           </div>
         )}
 
+        {isNextWeek ? (
+          <div className="flex flex-col items-center gap-4 mt-10">
+            <div className="bg-primary/5 border border-primary/20 rounded-2xl px-6 py-4 text-center max-w-md">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                📝 Здесь ты можешь заранее записать задачи на следующую неделю. Нажми на ячейку в сетке, чтобы добавить задачу на конкретный день.
+              </p>
+            </div>
+            <button
+              onClick={() => setViewingWeek(weekNumber)}
+              className="group inline-flex items-center gap-2.5 bg-primary text-primary-foreground px-8 py-3.5 rounded-full font-semibold text-sm tracking-wide shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200 active:scale-[0.97]"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Вернуться к текущей неделе
+            </button>
+          </div>
+        ) : (
         <div className="flex flex-col items-center gap-4 mt-10">
           <button
             onClick={generatePDF}
@@ -868,6 +884,7 @@ const Dashboard = () => {
             <ArrowLeft className="w-4 h-4" /> Начать заново
           </button>
         </div>
+        )}
       </div>
 
       {pdfUrl && (
