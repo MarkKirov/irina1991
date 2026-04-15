@@ -597,7 +597,7 @@ const Dashboard = () => {
               </div>
             )}
 
-            {(() => {
+            {!isNextWeek && (() => {
               const monthTasks = actionable.filter((t) => t.day === MONTH);
               const isDropTarget = touchSelected !== null;
 
