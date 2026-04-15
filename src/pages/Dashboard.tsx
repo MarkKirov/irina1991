@@ -660,8 +660,7 @@ const Dashboard = () => {
               );
             })()}
 
-            {/* Делать каждый день */}
-            {(() => {
+            {!isNextWeek && (() => {
               const dailyTasks = actionable.filter((t) => t.day === DAILY);
               const isDropTarget = touchSelected !== null;
 
