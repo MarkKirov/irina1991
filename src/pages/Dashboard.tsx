@@ -71,8 +71,18 @@ const Dashboard = () => {
   }, [pdfUrl]);
 
   const actionable = tasks.filter((t) => t.priority && t.priority !== "drop");
+  // For the weekly grid, filter by viewed week
+  const weekFilteredActionable = actionable.filter((t) => {
+    // Tasks without day are unassigned — show in current week view only
+    if (!t.day) return !isNextWeek;
+    // Month/daily/habit tasks show in both weeks
+    if (t.day === MONTH || t.day === DAILY || t.day === HABIT) return !isNextWeek;
+    // Day-assigned tasks: filter by week
+    const taskWeek = t.week || weekNumber;
+    return taskWeek === viewingWeek;
+  });
   const unassigned = actionable.filter((t) => !t.day);
-  const dayTasks = (day: string) => actionable.filter((t) => t.day === day);
+  const dayTasks = (day: string) => weekFilteredActionable.filter((t) => t.day === day);
 
   const selDayTasks = dayTasks(selectedDay);
   const doneCount = selDayTasks.filter((t) => t.done).length;
