@@ -15,6 +15,8 @@ import {
   ClipboardList,
   Trash2,
   Copy,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Category } from "@/context/TaskContext";
