@@ -821,10 +821,52 @@ const Dashboard = () => {
 
         {isNextWeek ? (
           <div className="flex flex-col items-center gap-4 mt-10">
-            <div className="bg-primary/5 border border-primary/20 rounded-2xl px-6 py-4 text-center max-w-md">
+            <div className="bg-primary/5 border border-primary/20 rounded-2xl px-6 py-4 text-center max-w-md space-y-3">
               <p className="text-sm text-muted-foreground leading-relaxed">
-                📝 Здесь ты можешь заранее записать задачи на следующую неделю. Нажми на ячейку в сетке, чтобы добавить задачу на конкретный день.
+                📝 Записывай задачи на следующую неделю заранее. Добавь задачу ниже и перетащи её на нужный день.
               </p>
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={newTaskText}
+                  onChange={(e) => setNewTaskText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && newTaskText.trim()) {
+                      addTask(newTaskText.trim(), newTaskCategory, "routine", viewingWeek);
+                      setNewTaskText("");
+                    }
+                  }}
+                  placeholder="Новая задача на следующую неделю…"
+                  className="w-full bg-background border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                />
+                <div className="flex gap-1.5 justify-center">
+                  {(["home", "work", "me"] as Category[]).map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setNewTaskCategory(cat)}
+                      className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
+                        newTaskCategory === cat
+                          ? "bg-primary/10 border-primary/30 text-foreground"
+                          : "border-border text-muted-foreground hover:border-primary/20"
+                      }`}
+                    >
+                      {categoryEmoji(cat)} {cat === "home" ? "Дом" : cat === "work" ? "Работа" : "Я"}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => {
+                    if (newTaskText.trim()) {
+                      addTask(newTaskText.trim(), newTaskCategory, "routine", viewingWeek);
+                      setNewTaskText("");
+                    }
+                  }}
+                  disabled={!newTaskText.trim()}
+                  className="w-full bg-primary text-primary-foreground text-xs font-medium py-2 rounded-lg disabled:opacity-40 transition-opacity"
+                >
+                  Добавить задачу
+                </button>
+              </div>
             </div>
             <button
               onClick={() => setViewingWeek(weekNumber)}
