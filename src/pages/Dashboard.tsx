@@ -588,7 +588,7 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {unassigned.length === 0 && actionable.length > 0 && (
+            {!isNextWeek && unassigned.length === 0 && actionable.length > 0 && (
               <div className="bg-orange-50 border-2 border-orange-400 rounded-2xl p-4 flex items-start gap-3">
                 <span className="text-xl mt-0.5">✨</span>
                 <p className="text-sm text-orange-900 leading-relaxed">
