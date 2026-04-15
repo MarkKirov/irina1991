@@ -305,10 +305,39 @@ const Dashboard = () => {
         )}
 
         <div className="text-center mb-8 space-y-2">
-          <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Неделя {weekNumber} — Шаг 3 из 3</p>
+          <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Неделя {viewingWeek} — Шаг 3 из 3</p>
           <h1 className="text-3xl md:text-4xl text-foreground" style={{ lineHeight: 1.15 }}>
-            Твой план на неделю
+            {isNextWeek ? "План на следующую неделю" : "Твой план на неделю"}
           </h1>
+
+          {/* Week switcher */}
+          <div className="flex items-center justify-center gap-3 pt-2">
+            <button
+              onClick={() => setViewingWeek(weekNumber)}
+              disabled={viewingWeek === weekNumber}
+              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                viewingWeek === weekNumber
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Текущая неделя
+            </button>
+            <button
+              onClick={() => setViewingWeek(weekNumber + 1)}
+              disabled={viewingWeek === weekNumber + 1}
+              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                viewingWeek === weekNumber + 1
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              Следующая неделя
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
           <p className="text-sm text-muted-foreground">
             {touchSelected ? "✨ Задача выбрана — нажми на день, чтобы назначить" : "Нажми на задачу, затем на день — или перетащи (на ПК)."}
           </p>
