@@ -27,10 +27,10 @@ interface TaskContextType {
   weekNumber: number;
   archivedWeeks: ArchivedWeek[];
   setGoal: (goal: string) => void;
-  addTask: (text: string, category: Category, priority?: Priority) => void;
+  addTask: (text: string, category: Category, priority?: Priority, week?: number | null) => void;
   removeTask: (id: string) => void;
   setPriority: (id: string, priority: Priority) => void;
-  assignDay: (id: string, day: string) => void;
+  assignDay: (id: string, day: string, week?: number) => void;
   toggleDone: (id: string) => void;
   unassignDay: (id: string) => void;
   setTaskTime: (id: string, time: string | null) => void;
