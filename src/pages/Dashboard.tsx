@@ -53,7 +53,10 @@ const Dashboard = () => {
   const [newTaskText, setNewTaskText] = useState("");
   const [newTaskCategory, setNewTaskCategory] = useState<Category>("home");
   const [showAddTask, setShowAddTask] = useState(false);
+  const [viewingWeek, setViewingWeek] = useState<number>(weekNumber);
   const touchData = useRef<{ id: string; startY: number } | null>(null);
+
+  const isNextWeek = viewingWeek > weekNumber;
 
   useEffect(() => {
     saveStep("/dashboard");
