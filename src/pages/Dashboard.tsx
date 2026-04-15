@@ -723,8 +723,7 @@ const Dashboard = () => {
               );
             })()}
 
-            {/* Привычка / навык на месяц */}
-            {(() => {
+            {!isNextWeek && (() => {
               const habitTasks = actionable.filter((t) => t.day === HABIT);
               const isDropTarget = touchSelected !== null;
 
