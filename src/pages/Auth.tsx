@@ -160,10 +160,10 @@ const Auth = () => {
             </div>
 
             {error && (
-              <p className="text-sm text-red-500 bg-red-50 rounded-lg px-3 py-2">{error}</p>
+              <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">{error}</p>
             )}
             {message && (
-              <p className="text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2">{message}</p>
+              <p className="text-sm text-primary bg-primary/10 rounded-lg px-3 py-2">{message}</p>
             )}
 
             <button
