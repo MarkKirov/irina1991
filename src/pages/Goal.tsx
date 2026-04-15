@@ -84,7 +84,7 @@ const Goal = () => {
           placeholder="Например: заработать 500 000 ₽ за этот месяц, или наладить отношения с партнёром, или запустить свой проект…"
           rows={3}
           className="w-full rounded-xl px-4 py-3 text-base placeholder:text-muted-foreground/50 border-0 outline-none focus:ring-2 focus:ring-ring/30 transition-shadow resize-none text-[16px]"
-          style={{ backgroundColor: "hsl(30 60% 95%)" }}
+          style={{ backgroundColor: "hsl(30 70% 88%)", border: "2px solid hsl(30 60% 75%)" }}
         />
 
         {/* AI feedback */}
