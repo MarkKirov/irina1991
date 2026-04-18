@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowRight, Clock, Sparkles, Heart } from "lucide-react";
-import coachPhoto from "@/assets/coach-irina.png";
+import { ArrowRight } from "lucide-react";
+import coachPhoto from "@/assets/coach-irina-hero.png";
 import { useCurrentStep } from "@/context/TaskContext";
 
 const Landing = () => {
@@ -9,9 +9,13 @@ const Landing = () => {
   const location = useLocation();
   const { getStep } = useCurrentStep();
 
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [dragX, setDragX] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const startXRef = useRef(0);
+  const maxXRef = useRef(0);
+
   useEffect(() => {
-    // Only auto-redirect if user arrived here directly (not via back button)
-    // location.state will have "fromBack" if navigated via back button
     if (location.state?.fromBack) return;
     const saved = getStep();
     if (saved && saved !== "/") {
@@ -19,8 +23,39 @@ const Landing = () => {
     }
   }, []);
 
+  const computeMax = () => {
+    if (!trackRef.current) return 0;
+    // track width minus knob (64px) minus padding (8px)
+    return trackRef.current.clientWidth - 64 - 8;
+  };
+
+  const onStart = (clientX: number) => {
+    maxXRef.current = computeMax();
+    startXRef.current = clientX - dragX;
+    setDragging(true);
+  };
+
+  const onMove = (clientX: number) => {
+    if (!dragging) return;
+    const next = Math.max(0, Math.min(maxXRef.current, clientX - startXRef.current));
+    setDragX(next);
+  };
+
+  const onEnd = () => {
+    if (!dragging) return;
+    setDragging(false);
+    if (dragX >= maxXRef.current * 0.85) {
+      setDragX(maxXRef.current);
+      setTimeout(() => navigate("/goal"), 150);
+    } else {
+      setDragX(0);
+    }
+  };
+
+  const progress = maxXRef.current > 0 ? dragX / maxXRef.current : 0;
+
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: "hsl(15 55% 35%)" }}>
       {/* Background photo */}
       <div className="absolute inset-0">
         <img
@@ -28,55 +63,87 @@ const Landing = () => {
           alt="Коуч Ирина Логачева"
           className="w-full h-full object-cover object-top"
         />
-        {/* Gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/30" />
+        {/* Bottom fade for text readability */}
+        <div
+          className="absolute inset-x-0 bottom-0 h-2/3"
+          style={{
+            background:
+              "linear-gradient(to top, hsl(15 55% 35%) 0%, hsl(15 55% 35% / 0.85) 35%, hsl(15 55% 35% / 0) 100%)",
+          }}
+        />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-end px-6 pb-12 pt-24">
-        <div className="max-w-lg w-full flex flex-col items-center text-center space-y-6">
-          <p className="text-xs font-medium text-muted-foreground tracking-[0.25em] uppercase">
-            С коучем ICF Ириной Логачевой
-          </p>
+      {/* Top labels */}
+      <div className="relative z-10 flex justify-between items-center px-6 pt-6 text-white">
+        <span className="text-[11px] tracking-[0.3em] uppercase font-medium">
+          Coach · ICF
+        </span>
+        <span
+          className="text-base"
+          style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}
+        >
+          Irina L.
+        </span>
+      </div>
 
+      {/* Bottom content */}
+      <div className="absolute inset-x-0 bottom-0 z-10 px-7 pb-8">
+        <div className="max-w-lg mx-auto space-y-5">
           <h1
-            className="text-4xl md:text-5xl leading-tight text-foreground"
+            className="text-white"
             style={{
               fontFamily: "'Cormorant Garamond', serif",
               fontWeight: 500,
-              lineHeight: 1.15,
+              fontSize: "clamp(2.5rem, 9vw, 3.5rem)",
+              lineHeight: 1.05,
               letterSpacing: "-0.01em",
             }}
           >
-            Разгрузи голову за&nbsp;15&nbsp;минут
+            <span className="italic">Разгрузи</span>
+            <br />
+            <span className="italic">голову</span> за 15 мин.
           </h1>
 
-          <p
-            className="text-base text-muted-foreground max-w-sm leading-relaxed"
-            style={{ textWrap: "pretty" as any }}
-          >
-            Преврати хаос в голове в спокойный, структурированный план на неделю
-            — и наконец выдохни.
+          <p className="text-white/90 text-[15px] leading-relaxed font-medium max-w-md">
+            Преврати хаос в спокойный, структурированный план на неделю — и наконец выдохни.
           </p>
 
-          <button
-            onClick={() => navigate("/goal")}
-            className="group inline-flex items-center gap-2.5 bg-primary text-primary-foreground px-8 py-3.5 rounded-full font-semibold text-sm tracking-wide shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200 active:scale-[0.97]"
+          {/* Swipe to start */}
+          <div
+            ref={trackRef}
+            className="relative h-16 rounded-full select-none touch-none"
+            style={{
+              backgroundColor: "hsl(15 30% 55% / 0.55)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+              border: "1px solid hsl(0 0% 100% / 0.15)",
+            }}
+            onMouseDown={(e) => onStart(e.clientX)}
+            onMouseMove={(e) => onMove(e.clientX)}
+            onMouseUp={onEnd}
+            onMouseLeave={onEnd}
+            onTouchStart={(e) => onStart(e.touches[0].clientX)}
+            onTouchMove={(e) => onMove(e.touches[0].clientX)}
+            onTouchEnd={onEnd}
           >
-            Начать
-            <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-          </button>
+            {/* Label */}
+            <div
+              className="absolute inset-0 flex items-center justify-center text-white text-[15px] font-medium pointer-events-none transition-opacity"
+              style={{ opacity: 1 - progress * 1.5 }}
+            >
+              Потяни, чтобы начать
+            </div>
 
-          <div className="flex items-center gap-6 pt-2 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5" /> 15 мин
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" /> Бесплатно
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Heart className="w-3.5 h-3.5" /> Без регистрации
-            </span>
+            {/* Knob */}
+            <div
+              className="absolute top-1 left-1 h-14 w-14 rounded-full bg-white flex items-center justify-center shadow-lg cursor-grab active:cursor-grabbing"
+              style={{
+                transform: `translateX(${dragX}px)`,
+                transition: dragging ? "none" : "transform 0.3s ease",
+              }}
+            >
+              <ArrowRight className="w-5 h-5" style={{ color: "hsl(15 55% 35%)" }} />
+            </div>
           </div>
         </div>
       </div>
