@@ -73,8 +73,8 @@ const Landing = () => {
         />
       </div>
 
-      {/* Top labels */}
-      <div className="relative z-10 flex justify-between items-center px-6 pt-6 text-white">
+      {/* Top labels — pushed down from very top */}
+      <div className="relative z-10 flex justify-between items-center px-6 pt-16 text-white">
         <span className="text-[11px] tracking-[0.3em] uppercase font-medium">
           Coach · ICF
         </span>
@@ -86,8 +86,8 @@ const Landing = () => {
         </span>
       </div>
 
-      {/* Bottom content */}
-      <div className="absolute inset-x-0 bottom-0 z-10 px-7 pb-8">
+      {/* Bottom content — lifted above mobile browser chrome */}
+      <div className="absolute inset-x-0 bottom-0 z-10 px-7 pb-24">
         <div className="max-w-lg mx-auto space-y-5">
           <h1
             className="text-white"
