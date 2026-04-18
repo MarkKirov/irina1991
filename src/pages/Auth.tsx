@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/context/AuthContext";
-import { useEffect } from "react";
 import { Mail, Lock, ArrowLeft, Eye, EyeOff } from "lucide-react";
+
+type Mode = "login" | "signup" | "forgot";
 
 const Auth = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
+  const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -21,17 +22,23 @@ const Auth = () => {
     if (user) navigate("/dashboard", { replace: true });
   }, [user]);
 
-  const handleEmailAuth = async (e: React.FormEvent) => {
+  const switchMode = (m: Mode) => {
+    setMode(m);
+    setError(null);
+    setMessage(null);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setMessage(null);
     setLoading(true);
 
     try {
-      if (isLogin) {
+      if (mode === "login") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-      } else {
+      } else if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -39,13 +46,21 @@ const Auth = () => {
         });
         if (error) throw error;
         setMessage("Проверьте почту — мы отправили ссылку для подтверждения.");
+      } else {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) throw error;
+        setMessage("Письмо для сброса пароля отправлено. Проверьте почту (и папку Спам).");
       }
     } catch (err: any) {
-      setError(err.message === "Invalid login credentials"
-        ? "Неверный email или пароль"
-        : err.message === "User already registered"
-        ? "Этот email уже зарегистрирован. Войдите."
-        : err.message);
+      setError(
+        err.message === "Invalid login credentials"
+          ? "Неверный email или пароль"
+          : err.message === "User already registered"
+          ? "Этот email уже зарегистрирован. Войдите."
+          : err.message
+      );
     } finally {
       setLoading(false);
     }
@@ -56,39 +71,24 @@ const Auth = () => {
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: `${window.location.origin}/dashboard`,
     });
-    if (result.error) {
-      setError("Не удалось войти через Google");
-    }
+    if (result.error) setError("Не удалось войти через Google");
     if (result.redirected) return;
   };
 
-  const handleForgotPassword = async () => {
-    setError(null);
-    setMessage(null);
-    if (!email) {
-      setError("Введите email выше, и мы отправим ссылку для сброса пароля");
-      return;
-    }
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-      if (error) throw error;
-      setMessage("Письмо для сброса пароля отправлено. Проверьте почту (и папку Спам).");
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const title = mode === "login" ? "Вход в планер" : mode === "signup" ? "Регистрация" : "Восстановление пароля";
+  const subtitle =
+    mode === "login"
+      ? "Войдите, чтобы продолжить планирование"
+      : mode === "signup"
+      ? "Создайте аккаунт для доступа к планеру"
+      : "Введите email — пришлём ссылку для нового пароля";
+  const submitLabel = mode === "login" ? "Войти" : mode === "signup" ? "Зарегистрироваться" : "Отправить ссылку";
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Back button */}
       <div className="p-4">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => (mode === "forgot" ? switchMode("login") : navigate(-1))}
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -101,45 +101,40 @@ const Auth = () => {
           <div className="text-center space-y-2">
             <h1
               className="text-3xl text-foreground"
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontWeight: 500,
-              }}
+              style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}
             >
-              {isLogin ? "Вход в планер" : "Регистрация"}
+              {title}
             </h1>
-            <p className="text-sm text-muted-foreground">
-              {isLogin
-                ? "Войдите, чтобы продолжить планирование"
-                : "Создайте аккаунт для доступа к планеру"}
-            </p>
+            <p className="text-sm text-muted-foreground">{subtitle}</p>
           </div>
 
-          {/* Google button */}
-          <button
-            onClick={handleGoogle}
-            className="w-full flex items-center justify-center gap-3 border border-border rounded-xl py-3 px-4 text-sm font-medium hover:bg-accent transition-colors"
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18">
-              <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z" />
-              <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z" />
-              <path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.997 8.997 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z" />
-              <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58Z" />
-            </svg>
-            Войти через Google
-          </button>
+          {mode !== "forgot" && (
+            <>
+              <button
+                onClick={handleGoogle}
+                className="w-full flex items-center justify-center gap-3 border border-border rounded-xl py-3 px-4 text-sm font-medium hover:bg-accent transition-colors"
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18">
+                  <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z" />
+                  <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z" />
+                  <path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.997 8.997 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z" />
+                  <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58Z" />
+                </svg>
+                Войти через Google
+              </button>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-background px-3 text-muted-foreground">или</span>
-            </div>
-          </div>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs">
+                  <span className="bg-background px-3 text-muted-foreground">или</span>
+                </div>
+              </div>
+            </>
+          )}
 
-          {/* Email form */}
-          <form onSubmit={handleEmailAuth} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-muted-foreground">Email</label>
               <div className="relative">
@@ -156,29 +151,31 @@ const Auth = () => {
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Пароль</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  className="w-full pl-10 pr-10 py-3 rounded-xl border border-border bg-background text-base focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
-                  placeholder="Минимум 6 символов"
-                  style={{ fontSize: "16px" }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+            {mode !== "forgot" && (
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground">Пароль</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    className="w-full pl-10 pr-10 py-3 rounded-xl border border-border bg-background text-base focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                    placeholder="Минимум 6 символов"
+                    style={{ fontSize: "16px" }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {error && (
               <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">{error}</p>
@@ -192,13 +189,13 @@ const Auth = () => {
               disabled={loading}
               className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold text-sm tracking-wide shadow-lg shadow-primary/20 hover:shadow-xl transition-all disabled:opacity-50"
             >
-              {loading ? "Подождите..." : isLogin ? "Войти" : "Зарегистрироваться"}
+              {loading ? "Подождите..." : submitLabel}
             </button>
 
-            {isLogin && (
+            {mode === "login" && (
               <button
                 type="button"
-                onClick={handleForgotPassword}
+                onClick={() => switchMode("forgot")}
                 className="w-full text-center text-sm text-muted-foreground hover:text-primary transition-colors"
               >
                 Забыли пароль?
@@ -206,15 +203,17 @@ const Auth = () => {
             )}
           </form>
 
-          <p className="text-center text-sm text-muted-foreground">
-            {isLogin ? "Нет аккаунта?" : "Уже есть аккаунт?"}{" "}
-            <button
-              onClick={() => { setIsLogin(!isLogin); setError(null); setMessage(null); }}
-              className="text-primary font-medium hover:underline"
-            >
-              {isLogin ? "Зарегистрироваться" : "Войти"}
-            </button>
-          </p>
+          {mode !== "forgot" && (
+            <p className="text-center text-sm text-muted-foreground">
+              {mode === "login" ? "Нет аккаунта?" : "Уже есть аккаунт?"}{" "}
+              <button
+                onClick={() => switchMode(mode === "login" ? "signup" : "login")}
+                className="text-primary font-medium hover:underline"
+              >
+                {mode === "login" ? "Зарегистрироваться" : "Войти"}
+              </button>
+            </p>
+          )}
         </div>
       </div>
     </div>
