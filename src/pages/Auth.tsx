@@ -9,7 +9,7 @@ import { Mail, Lock, ArrowLeft, Eye, EyeOff } from "lucide-react";
 const Auth = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [isLogin, setIsLogin] = useState(true);
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
