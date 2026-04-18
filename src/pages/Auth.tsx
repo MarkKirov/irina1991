@@ -35,7 +35,7 @@ const Auth = () => {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin },
+          options: { emailRedirectTo: `${window.location.origin}/dashboard` },
         });
         if (error) throw error;
         setMessage("Проверьте почту — мы отправили ссылку для подтверждения.");
@@ -54,12 +54,33 @@ const Auth = () => {
   const handleGoogle = async () => {
     setError(null);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}/dashboard`,
     });
     if (result.error) {
       setError("Не удалось войти через Google");
     }
     if (result.redirected) return;
+  };
+
+  const handleForgotPassword = async () => {
+    setError(null);
+    setMessage(null);
+    if (!email) {
+      setError("Введите email выше, и мы отправим ссылку для сброса пароля");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      setMessage("Письмо для сброса пароля отправлено. Проверьте почту (и папку Спам).");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -173,6 +194,16 @@ const Auth = () => {
             >
               {loading ? "Подождите..." : isLogin ? "Войти" : "Зарегистрироваться"}
             </button>
+
+            {isLogin && (
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="w-full text-center text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                Забыли пароль?
+              </button>
+            )}
           </form>
 
           <p className="text-center text-sm text-muted-foreground">

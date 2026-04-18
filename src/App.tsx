@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import WeeklyReport from "./pages/WeeklyReport";
 import Mentorship from "./pages/Mentorship";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/dump" element={<BrainDump />} />
             <Route path="/filter" element={<Filtering />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/report" element={<ProtectedRoute><WeeklyReport /></ProtectedRoute>} />
             <Route path="/mentorship" element={<ProtectedRoute><Mentorship /></ProtectedRoute>} />
