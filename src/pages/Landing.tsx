@@ -73,16 +73,10 @@ const Landing = () => {
         />
       </div>
 
-      {/* Top labels — pushed down from very top */}
-      <div className="relative z-10 flex justify-between items-center px-6 pt-16 text-white">
+      {/* Top label — right aligned, where Irina L. used to be */}
+      <div className="relative z-10 flex justify-end items-center px-6 pt-16 text-white">
         <span className="text-[11px] tracking-[0.3em] uppercase font-medium">
           Coach · ICF
-        </span>
-        <span
-          className="text-base"
-          style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}
-        >
-          Irina L.
         </span>
       </div>
 
