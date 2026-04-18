@@ -194,6 +194,16 @@ const Auth = () => {
             >
               {loading ? "Подождите..." : isLogin ? "Войти" : "Зарегистрироваться"}
             </button>
+
+            {isLogin && (
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="w-full text-center text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                Забыли пароль?
+              </button>
+            )}
           </form>
 
           <p className="text-center text-sm text-muted-foreground">
