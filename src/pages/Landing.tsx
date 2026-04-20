@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import coachPhoto from "@/assets/coach-irina-hero.png";
+import coachPhoto from "@/assets/coach-irina-hero.jpg";
 import { useCurrentStep } from "@/context/TaskContext";
 
 const Landing = () => {
@@ -55,7 +55,7 @@ const Landing = () => {
   const progress = maxXRef.current > 0 ? dragX / maxXRef.current : 0;
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: "hsl(15 55% 35%)" }}>
+    <div className="min-h-screen relative overflow-hidden bg-background">
       {/* Background photo */}
       <div className="absolute inset-0">
         <img
@@ -63,20 +63,20 @@ const Landing = () => {
           alt="Коуч Ирина Логачева"
           className="w-full h-full object-cover object-top"
         />
-        {/* Bottom fade for text readability */}
+        {/* Bottom white fade for text readability */}
         <div
-          className="absolute inset-x-0 bottom-0 h-2/3"
+          className="absolute inset-x-0 bottom-0 h-3/4"
           style={{
             background:
-              "linear-gradient(to top, hsl(15 55% 35%) 0%, hsl(15 55% 35% / 0.85) 35%, hsl(15 55% 35% / 0) 100%)",
+              "linear-gradient(to top, hsl(var(--background)) 0%, hsl(var(--background) / 0.92) 40%, hsl(var(--background) / 0) 100%)",
           }}
         />
       </div>
 
-      {/* Top label — right aligned, where Irina L. used to be */}
-      <div className="relative z-10 flex justify-end items-center px-6 pt-16 text-white">
-        <span className="text-[11px] tracking-[0.3em] uppercase font-medium">
-          Coach · ICF
+      {/* Top label */}
+      <div className="relative z-10 flex justify-center items-center px-6 pt-10">
+        <span className="text-[11px] tracking-[0.3em] uppercase font-medium text-foreground/60">
+          С коучем ICF Ириной Логачевой
         </span>
       </div>
 
@@ -84,33 +84,32 @@ const Landing = () => {
       <div className="absolute inset-x-0 bottom-0 z-10 px-7 pb-24">
         <div className="max-w-lg mx-auto space-y-5">
           <h1
-            className="text-white"
+            className="text-foreground text-center"
             style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontWeight: 500,
-              fontSize: "clamp(2.5rem, 9vw, 3.5rem)",
+              fontFamily: "'DM Serif Display', serif",
+              fontWeight: 400,
+              fontSize: "clamp(2.25rem, 8.5vw, 3.25rem)",
               lineHeight: 1.05,
               letterSpacing: "-0.01em",
             }}
           >
-            <span className="italic">Разгрузи</span>
+            Разгрузи голову
             <br />
-            <span className="italic">голову</span> за 15 мин.
+            за 15 минут
           </h1>
 
-          <p className="text-white/90 text-[15px] leading-relaxed font-medium max-w-md">
-            Преврати хаос в спокойный, структурированный план на неделю — и наконец выдохни.
+          <p className="text-foreground/70 text-[15px] leading-relaxed text-center max-w-md mx-auto">
+            Преврати хаос в голове в спокойный, структурированный план на неделю — и наконец выдохни.
           </p>
 
           {/* Swipe to start */}
           <div
             ref={trackRef}
-            className="relative h-16 rounded-full select-none touch-none"
+            className="relative h-16 rounded-full select-none touch-none border border-primary/30"
             style={{
-              backgroundColor: "hsl(15 30% 55% / 0.55)",
+              backgroundColor: "hsl(var(--primary) / 0.18)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
-              border: "1px solid hsl(0 0% 100% / 0.15)",
             }}
             onMouseDown={(e) => onStart(e.clientX)}
             onMouseMove={(e) => onMove(e.clientX)}
@@ -122,7 +121,7 @@ const Landing = () => {
           >
             {/* Label */}
             <div
-              className="absolute inset-0 flex items-center justify-center text-white text-[15px] font-medium pointer-events-none transition-opacity"
+              className="absolute inset-0 flex items-center justify-center text-primary text-[15px] font-medium pointer-events-none transition-opacity"
               style={{ opacity: 1 - progress * 1.5 }}
             >
               Потяни, чтобы начать
@@ -130,13 +129,13 @@ const Landing = () => {
 
             {/* Knob */}
             <div
-              className="absolute top-1 left-1 h-14 w-14 rounded-full bg-white flex items-center justify-center shadow-lg cursor-grab active:cursor-grabbing"
+              className="absolute top-1 left-1 h-14 w-14 rounded-full bg-primary flex items-center justify-center shadow-lg cursor-grab active:cursor-grabbing"
               style={{
                 transform: `translateX(${dragX}px)`,
                 transition: dragging ? "none" : "transform 0.3s ease",
               }}
             >
-              <ArrowRight className="w-5 h-5" style={{ color: "hsl(15 55% 35%)" }} />
+              <ArrowRight className="w-5 h-5 text-primary-foreground" />
             </div>
           </div>
         </div>
