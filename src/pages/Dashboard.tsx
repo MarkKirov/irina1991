@@ -30,13 +30,16 @@ const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 const MONTH = "Месяц";
 const DAILY = "Ежедневно";
 const HABIT = "Привычка";
-const TIME_SLOTS = Array.from({ length: 14 }, (_, i) => {
-  const hour = 8 + i;
-  return `${hour.toString().padStart(2, "0")}:00`;
+// 30-минутные слоты с 08:00 до 21:30
+const TIME_SLOTS = Array.from({ length: 28 }, (_, i) => {
+  const totalMinutes = 8 * 60 + i * 30;
+  const hour = Math.floor(totalMinutes / 60);
+  const minute = totalMinutes % 60;
+  return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
 });
 
 const Dashboard = () => {
-  const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber, addTask, setTaskTime, removeTask } = useTaskContext();
+  const { tasks, assignDay, toggleDone, unassignDay, goal, weekNumber, archivedWeeks, addTask, setTaskTime, removeTask } = useTaskContext();
   const { saveStep } = useCurrentStep();
   const navigate = useNavigate();
 
@@ -57,6 +60,9 @@ const Dashboard = () => {
   const touchData = useRef<{ id: string; startY: number } | null>(null);
 
   const isNextWeek = viewingWeek > weekNumber;
+  const isPastWeek = viewingWeek < weekNumber;
+  const isCurrentWeek = viewingWeek === weekNumber;
+  const archivedWeek = isPastWeek ? archivedWeeks.find((w) => w.weekNumber === viewingWeek) : null;
 
   useEffect(() => {
     saveStep("/dashboard");
@@ -70,7 +76,9 @@ const Dashboard = () => {
     };
   }, [pdfUrl]);
 
-  const actionable = tasks.filter((t) => t.priority && t.priority !== "drop");
+  const liveActionable = tasks.filter((t) => t.priority && t.priority !== "drop");
+  // For past weeks, use archived snapshot; otherwise live tasks
+  const actionable = isPastWeek ? (archivedWeek?.tasks ?? []) : liveActionable;
   // For the weekly grid, filter by viewed week
   const weekFilteredActionable = actionable.filter((t) => {
     // Month/daily/habit tasks show only in current week view
@@ -314,7 +322,20 @@ const Dashboard = () => {
           </h1>
 
           {/* Week switcher */}
-          <div className="flex items-center justify-center gap-3 pt-2">
+          <div className="flex items-center justify-center gap-2 pt-2 flex-wrap">
+            <button
+              onClick={() => setViewingWeek(viewingWeek - 1)}
+              disabled={!archivedWeeks.some((w) => w.weekNumber === viewingWeek - 1)}
+              className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                archivedWeeks.some((w) => w.weekNumber === viewingWeek - 1)
+                  ? "bg-muted text-muted-foreground hover:bg-muted/80"
+                  : "bg-muted/40 text-muted-foreground/40 cursor-not-allowed"
+              }`}
+              title="Прошлая неделя"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Прошлая
+            </button>
             <button
               onClick={() => setViewingWeek(weekNumber)}
               disabled={viewingWeek === weekNumber}
@@ -324,22 +345,29 @@ const Dashboard = () => {
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
             >
-              <ChevronLeft className="w-4 h-4" />
               Текущая неделя
             </button>
             <button
               onClick={() => setViewingWeek(weekNumber + 1)}
               disabled={viewingWeek === weekNumber + 1}
-              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+              className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                 viewingWeek === weekNumber + 1
                   ? "bg-primary text-primary-foreground shadow-md"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
+              title="Следующая неделя"
             >
-              Следующая неделя
+              Следующая
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
+          {isPastWeek && (
+            <p className="text-xs text-muted-foreground/80 italic">
+              {archivedWeek
+                ? "Архив этой недели — только просмотр"
+                : "Архив этой недели не найден"}
+            </p>
+          )}
 
           <p className="text-sm text-muted-foreground">
             {touchSelected ? "✨ Задача выбрана — нажми на день, чтобы назначить" : "Нажми на задачу, затем на день — или перетащи (на ПК)."}
@@ -349,8 +377,8 @@ const Dashboard = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
-          {(
+        <div className={`grid grid-cols-1 ${isPastWeek ? "" : "lg:grid-cols-[280px_1fr]"} gap-6`}>
+          {!isPastWeek && (
           <div className="bg-card border rounded-2xl p-5 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-semibold text-foreground">Нераспределённые задачи</h2>
