@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 
 export type Category = "home" | "work" | "me";
 export type Priority = "urgent" | "important" | "routine" | "drop" | null;
@@ -73,6 +75,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const [goal, setGoalState] = useState<string>(() => loadFromStorage(STORAGE_KEY_GOAL, ""));
   const [weekNumber, setWeekNumber] = useState<number>(() => loadFromStorage(STORAGE_KEY_WEEK, 1));
   const [archivedWeeks, setArchivedWeeks] = useState<ArchivedWeek[]>(() => loadFromStorage(STORAGE_KEY_ARCHIVE, []));
+  const { user } = useAuth();
+  const [cloudLoaded, setCloudLoaded] = useState(false);
 
   const setGoal = (g: string) => {
     setGoalState(g);
@@ -163,6 +167,65 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_TASKS, JSON.stringify(tasks));
   }, [tasks]);
+
+  // Загрузка данных пользовательницы из облака при входе
+  useEffect(() => {
+    if (!user) {
+      setCloudLoaded(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from("user_data")
+        .select("data")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (cancelled) return;
+      if (error) {
+        console.error("Cloud load error:", error);
+        setCloudLoaded(true);
+        return;
+      }
+      const cloud = (data?.data ?? null) as null | {
+        tasks?: Task[];
+        goal?: string;
+        weekNumber?: number;
+        archivedWeeks?: ArchivedWeek[];
+      };
+      const cloudHasData =
+        cloud && ((cloud.tasks?.length ?? 0) > 0 || (cloud.goal ?? "") !== "" || (cloud.archivedWeeks?.length ?? 0) > 0);
+      if (cloudHasData) {
+        if (cloud!.tasks) setTasks(cloud!.tasks);
+        if (cloud!.goal !== undefined) setGoalState(cloud!.goal);
+        if (cloud!.weekNumber) setWeekNumber(cloud!.weekNumber);
+        if (cloud!.archivedWeeks) setArchivedWeeks(cloud!.archivedWeeks);
+        if (cloud!.tasks) localStorage.setItem(STORAGE_KEY_TASKS, JSON.stringify(cloud!.tasks));
+        if (cloud!.goal !== undefined) localStorage.setItem(STORAGE_KEY_GOAL, JSON.stringify(cloud!.goal));
+        if (cloud!.weekNumber) localStorage.setItem(STORAGE_KEY_WEEK, JSON.stringify(cloud!.weekNumber));
+        if (cloud!.archivedWeeks) localStorage.setItem(STORAGE_KEY_ARCHIVE, JSON.stringify(cloud!.archivedWeeks));
+      }
+      setCloudLoaded(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  // Сохранение в облако с задержкой
+  useEffect(() => {
+    if (!user || !cloudLoaded) return;
+    const handle = setTimeout(async () => {
+      const { error } = await supabase
+        .from("user_data")
+        .upsert(
+          { user_id: user.id, data: { tasks, goal, weekNumber, archivedWeeks } as any },
+          { onConflict: "user_id" }
+        );
+      if (error) console.error("Cloud save error:", error);
+    }, 800);
+    return () => clearTimeout(handle);
+  }, [user, cloudLoaded, tasks, goal, weekNumber, archivedWeeks]);
 
   return (
     <TaskContext.Provider value={{ tasks, goal, weekNumber, archivedWeeks, setGoal, addTask, removeTask, setPriority, assignDay, toggleDone, unassignDay, setTaskTime, startNextWeek }}>
