@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { TaskProvider } from "@/context/TaskContext";
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { useAutoUpdate } from "@/hooks/useAutoUpdate";
 import Landing from "./pages/Landing";
 import Goal from "./pages/Goal";
 import BrainDump from "./pages/BrainDump";
@@ -16,7 +17,9 @@ import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
-const App = () => (
+const App = () => {
+  useAutoUpdate();
+  return (
   <AuthProvider>
     <TaskProvider>
       <TooltipProvider>
@@ -39,6 +42,7 @@ const App = () => (
       </TooltipProvider>
     </TaskProvider>
   </AuthProvider>
-);
+  );
+};
 
 export default App;
