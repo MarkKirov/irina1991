@@ -30,6 +30,19 @@ const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 const MONTH = "Месяц";
 const DAILY = "Ежедневно";
 const HABIT = "Привычка";
+const MAX_WEEKS_AHEAD = 4; // позволяем планировать в течение месяца вперёд
+
+const getMonday = (d: Date) => {
+  const date = new Date(d);
+  date.setHours(0, 0, 0, 0);
+  const day = date.getDay(); // 0 = вс
+  const diff = day === 0 ? -6 : 1 - day;
+  date.setDate(date.getDate() + diff);
+  return date;
+};
+
+const formatDayMonth = (d: Date) =>
+  `${d.getDate().toString().padStart(2, "0")}.${(d.getMonth() + 1).toString().padStart(2, "0")}`;
 // 30-минутные слоты с 08:00 до 21:30
 const TIME_SLOTS = Array.from({ length: 28 }, (_, i) => {
   const totalMinutes = 8 * 60 + i * 30;
@@ -63,6 +76,18 @@ const Dashboard = () => {
   const isPastWeek = viewingWeek < weekNumber;
   const isCurrentWeek = viewingWeek === weekNumber;
   const archivedWeek = isPastWeek ? archivedWeeks.find((w) => w.weekNumber === viewingWeek) : null;
+
+  // Даты недели, которую сейчас смотрим
+  const currentMonday = getMonday(new Date());
+  const viewingMonday = new Date(currentMonday);
+  viewingMonday.setDate(currentMonday.getDate() + (viewingWeek - weekNumber) * 7);
+  const dayDates = DAYS.map((_, i) => {
+    const d = new Date(viewingMonday);
+    d.setDate(viewingMonday.getDate() + i);
+    return d;
+  });
+  const todayKey = formatDayMonth(new Date());
+  const weekRangeLabel = `${formatDayMonth(dayDates[0])} – ${formatDayMonth(dayDates[6])}`;
 
   useEffect(() => {
     saveStep("/dashboard");
@@ -348,19 +373,25 @@ const Dashboard = () => {
               Текущая неделя
             </button>
             <button
-              onClick={() => setViewingWeek(weekNumber + 1)}
-              disabled={viewingWeek === weekNumber + 1}
+              onClick={() => setViewingWeek(viewingWeek + 1)}
+              disabled={viewingWeek >= weekNumber + MAX_WEEKS_AHEAD}
               className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                viewingWeek === weekNumber + 1
+                viewingWeek >= weekNumber + MAX_WEEKS_AHEAD
+                  ? "bg-muted/40 text-muted-foreground/40 cursor-not-allowed"
+                  : isNextWeek
                   ? "bg-primary text-primary-foreground shadow-md"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
-              title="Следующая неделя"
+              title="Следующая неделя (до 4 недель вперёд)"
             >
               Следующая
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
+          <p className="text-xs text-muted-foreground/80 pt-1">
+            {weekRangeLabel}
+            {isNextWeek && ` · через ${viewingWeek - weekNumber} нед.`}
+          </p>
           {isPastWeek && (
             <p className="text-xs text-muted-foreground/80 italic">
               {archivedWeek
@@ -493,8 +524,10 @@ const Dashboard = () => {
               <div className="inline-grid min-w-[900px] w-full" style={{ gridTemplateColumns: "60px repeat(7, 1fr)" }}>
                 {/* Header row */}
                 <div className="sticky top-0 left-0 bg-background z-20 border-b border-border p-2" />
-                {DAYS.map((day) => {
+                {DAYS.map((day, idx) => {
                   const dt = dayTasks(day);
+                  const dateStr = formatDayMonth(dayDates[idx]);
+                  const isToday = isCurrentWeek && dateStr === todayKey;
                   return (
                     <div
                       key={day}
@@ -505,6 +538,9 @@ const Dashboard = () => {
                       <span className={`text-xs font-semibold tracking-wide ${day === selectedDay ? "text-primary" : "text-muted-foreground"}`}>
                         {day}
                       </span>
+                      <div className={`text-[10px] mt-0.5 ${isToday ? "text-primary font-bold" : "text-muted-foreground/70"}`}>
+                        {dateStr}
+                      </div>
                       {dt.length > 0 && (
                         <span className="ml-1 text-[10px] bg-muted text-muted-foreground rounded-full px-1.5 py-0.5">{dt.length}</span>
                       )}
