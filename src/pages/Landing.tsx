@@ -3,11 +3,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import coachPhoto from "@/assets/coach-irina-hero.jpg";
 import { useCurrentStep } from "@/context/TaskContext";
+import { useAuth } from "@/context/AuthContext";
 
 const Landing = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { getStep } = useCurrentStep();
+  const { user, signOut } = useAuth();
 
   const trackRef = useRef<HTMLDivElement>(null);
   const [dragX, setDragX] = useState(0);
@@ -78,6 +80,25 @@ const Landing = () => {
         <span className="text-[11px] tracking-[0.3em] uppercase font-medium text-foreground/60">
           С коучем ICF Ириной Логачевой
         </span>
+      </div>
+
+      {/* Auth link — top right */}
+      <div className="absolute top-8 right-5 z-20">
+        {user ? (
+          <button
+            onClick={() => signOut()}
+            className="text-[12px] font-medium text-foreground/70 bg-background/70 backdrop-blur px-3 py-1.5 rounded-full border border-foreground/10"
+          >
+            Выйти
+          </button>
+        ) : (
+          <button
+            onClick={() => navigate("/auth")}
+            className="text-[12px] font-medium text-primary bg-background/80 backdrop-blur px-3 py-1.5 rounded-full border border-primary/30"
+          >
+            Войти
+          </button>
+        )}
       </div>
 
       {/* Bottom content — lifted above mobile browser chrome */}
