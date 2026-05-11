@@ -621,7 +621,7 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {!isNextWeek && unassigned.length === 0 && actionable.length > 0 && (
+            {isCurrentWeek && unassigned.length === 0 && actionable.length > 0 && (
               <div className="bg-orange-50 border-2 border-orange-400 rounded-2xl p-4 flex items-start gap-3">
                 <span className="text-xl mt-0.5">✨</span>
                 <p className="text-sm text-orange-900 leading-relaxed">
@@ -630,7 +630,7 @@ const Dashboard = () => {
               </div>
             )}
 
-            {!isNextWeek && (() => {
+            {isCurrentWeek && (() => {
               const monthTasks = actionable.filter((t) => t.day === MONTH);
               const isDropTarget = touchSelected !== null;
 
@@ -693,7 +693,7 @@ const Dashboard = () => {
               );
             })()}
 
-            {!isNextWeek && (() => {
+            {isCurrentWeek && (() => {
               const dailyTasks = actionable.filter((t) => t.day === DAILY);
               const isDropTarget = touchSelected !== null;
 
@@ -756,7 +756,7 @@ const Dashboard = () => {
               );
             })()}
 
-            {!isNextWeek && (() => {
+            {isCurrentWeek && (() => {
               const habitTasks = actionable.filter((t) => t.day === HABIT);
               const isDropTarget = touchSelected !== null;
 
@@ -850,7 +850,22 @@ const Dashboard = () => {
           </div>
         )}
 
-        {isNextWeek ? (
+        {isPastWeek ? (
+          <div className="flex flex-col items-center gap-4 mt-10">
+            <div className="bg-muted/50 border border-border rounded-2xl px-6 py-4 text-center max-w-md">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                📚 Это архив прошедшей недели. Здесь видно, что ты планировала и что выполнила.
+              </p>
+            </div>
+            <button
+              onClick={() => setViewingWeek(weekNumber)}
+              className="group inline-flex items-center gap-2.5 bg-primary text-primary-foreground px-8 py-3.5 rounded-full font-semibold text-sm tracking-wide shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200 active:scale-[0.97]"
+            >
+              <ChevronRight className="w-4 h-4" />
+              Вернуться к текущей неделе
+            </button>
+          </div>
+        ) : isNextWeek ? (
           <div className="flex flex-col items-center gap-4 mt-10">
             <div className="bg-primary/5 border border-primary/20 rounded-2xl px-6 py-4 text-center max-w-md space-y-3">
               <p className="text-sm text-muted-foreground leading-relaxed">
